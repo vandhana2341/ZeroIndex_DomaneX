@@ -49,3 +49,16 @@
 ### NEXT STEPS
 - Testing
 - Presentation
+
+
+# HOUR 10-12
+### COMPLETED
+- Frontend
+- Backend
+- Database
+- AI Integration
+
+### IN_PROGRESS
+- Debugging
+- Refining and fine tuning
+- PPT
