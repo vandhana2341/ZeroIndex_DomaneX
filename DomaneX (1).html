@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DomaneX — Discover Your Domain</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0e1a;--bg2:#0f1525;--bg3:#151d35;--bg4:#1a2440;
+  --card:#161e30;--card2:#1c2540;
+  --border:#ffffff12;--border2:#ffffff20;
+  --text:#f0f4ff;--text2:#8896b3;--text3:#5a6a85;
+  --blue:#4f8ef7;--purple:#8b5cf6;--cyan:#06d6d6;--green:#10d488;--amber:#f59e0b;--red:#ef4444;--pink:#ec4899;
+  --grad:linear-gradient(135deg,#4f8ef7,#8b5cf6);
+  --grad2:linear-gradient(135deg,#06d6d6,#4f8ef7);
+  --font:'Sora',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px #4f8ef740}50%{box-shadow:0 0 40px #4f8ef780}}
+.fade-in{animation:fadeIn 0.4s ease forwards}
+.slide-in{animation:slideIn 0.3s ease forwards}
+.float{animation:float 3s ease-in-out infinite}
+
+/* Base */
+button{cursor:pointer;border:none;font-family:var(--font);outline:none}
+input,textarea,select{font-family:var(--font);outline:none}
+
+/* Layout */
+.app{min-height:100vh}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.section{padding:80px 0}
+.flex{display:flex}
+.flex-col{flex-direction:column}
+.items-center{align-items:center}
+.justify-center{justify-content:center}
+.justify-between{justify-content:space-between}
+.gap-4{gap:16px}
+.gap-6{gap:24px}
+.gap-8{gap:32px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:768px){
+  .grid-2{grid-template-columns:1fr}
+  .grid-3{grid-template-columns:1fr}
+  .grid-4{grid-template-columns:repeat(2,1fr)}
+  .hide-mobile{display:none}
+}
+
+/* Typography */
+.h1{font-size:clamp(2.4rem,6vw,4.5rem);font-weight:800;line-height:1.1;letter-spacing:-0.03em}
+.h2{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;letter-spacing:-0.02em}
+.h3{font-size:1.2rem;font-weight:600}
+.h4{font-size:1rem;font-weight:600}
+.body{font-size:0.95rem;line-height:1.7;color:var(--text2)}
+.small{font-size:0.8rem;color:var(--text3)}
+.mono{font-family:var(--mono);font-size:0.85rem}
+.gradient-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Components */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:12px;font-size:0.9rem;font-weight:600;transition:all 0.2s}
+.btn-primary{background:var(--grad);color:#fff}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px #4f8ef740}
+.btn-secondary{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text)}
+.btn-secondary:hover{background:var(--bg4)}
+.btn-ghost{background:transparent;color:var(--text2);padding:8px 16px}
+.btn-ghost:hover{color:var(--text);background:var(--bg3)}
+.btn-sm{padding:8px 16px;font-size:0.8rem;border-radius:8px}
+.btn-danger{background:#ef444420;border:0.5px solid #ef444440;color:var(--red)}
+.btn-success{background:#10d48820;border:0.5px solid #10d48840;color:var(--green)}
+
+.card{background:var(--card);border:0.5px solid var(--border);border-radius:16px;padding:24px;transition:all 0.2s}
+.card:hover{border-color:var(--border2)}
+.card-sm{border-radius:12px;padding:16px}
+.card-active{border-color:var(--blue)!important;background:var(--bg3)!important}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:0.73rem;font-weight:600}
+.badge-blue{background:#4f8ef720;color:var(--blue)}
+.badge-purple{background:#8b5cf620;color:var(--purple)}
+.badge-green{background:#10d48820;color:var(--green)}
+.badge-amber{background:#f59e0b20;color:var(--amber)}
+.badge-red{background:#ef444420;color:var(--red)}
+.badge-cyan{background:#06d6d620;color:var(--cyan)}
+
+.input{width:100%;background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-size:0.9rem}
+.input:focus{border-color:var(--blue);background:var(--bg4)}
+.label{font-size:0.8rem;color:var(--text2);font-weight:500;margin-bottom:6px;display:block}
+
+.progress-bar{background:var(--bg3);border-radius:999px;height:6px;overflow:hidden}
+.progress-fill{height:100%;border-radius:999px;background:var(--grad);transition:width 0.6s ease}
+
+.tab-bar{display:flex;gap:4px;background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:4px}
+.tab{padding:8px 16px;border-radius:8px;font-size:0.85rem;font-weight:500;color:var(--text2);cursor:pointer;transition:all 0.2s;background:transparent;border:none;font-family:var(--font)}
+.tab.active{background:var(--bg4);color:var(--text)}
+
+.divider{border:none;border-top:0.5px solid var(--border);margin:24px 0}
+
+/* Nav */
+.nav{position:sticky;top:0;z-index:100;background:var(--bg)cc;backdrop-filter:blur(20px);border-bottom:0.5px solid var(--border);padding:12px 0}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:1.2rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:4px}
+.nav-link{padding:8px 14px;border-radius:8px;font-size:0.85rem;color:var(--text2);cursor:pointer;transition:all 0.2s;font-weight:500}
+.nav-link:hover,.nav-link.active{color:var(--text);background:var(--bg3)}
+
+/* Landing */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 24px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 0%,#4f8ef715 0%,transparent 70%)}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.15}
+
+/* Domain cards */
+.domain-card{cursor:pointer;position:relative;overflow:hidden}
+.domain-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;border-radius:16px}
+.domain-card:hover::before{opacity:1}
+.domain-card:hover{transform:translateY(-4px)}
+
+/* Roadmap */
+.roadmap-phase{position:relative;padding-left:40px}
+.roadmap-phase::before{content:'';position:absolute;left:12px;top:32px;bottom:0;width:1px;background:var(--border)}
+.roadmap-dot{position:absolute;left:0;top:20px;width:24px;height:24px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#fff}
+
+/* Score ring */
+.score-ring{position:relative;width:120px;height:120px}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+/* Chart */
+.chart-wrap{position:relative;height:200px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--card2);border:0.5px solid var(--border2);border-radius:12px;padding:16px 20px;font-size:0.87rem;font-weight:500;animation:slideIn 0.3s ease;display:flex;align-items:center;gap:10px;max-width:320px}
+
+/* Scrollable area */
+.scroll-area{overflow-y:auto;max-height:400px;padding-right:4px}
+
+/* Step indicator */
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border2)}
+.step-dot.done{background:var(--grad)}
+.step-dot.active{background:var(--blue);width:24px;border-radius:4px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback}=React;
+
+// ========== DATA ==========
+const DOMAINS=[
+  {id:"ai",name:"Artificial Intelligence",icon:"🤖",color:"#4f8ef7",desc:"Build intelligent systems that think and learn",industries:["Healthcare","Finance","Automotive","Robotics"],skills:["Python","TensorFlow","Neural Networks","NLP","Computer Vision"],jobs:["ML Engineer","AI Researcher","NLP Engineer","Computer Vision Engineer"]},
+  {id:"ml",name:"Machine Learning",icon:"📊",color:"#8b5cf6",desc:"Create predictive models that improve with data",industries:["E-Commerce","Banking","Marketing","Research"],skills:["Python","Scikit-learn","Statistics","Feature Engineering","Deep Learning"],jobs:["ML Engineer","Data Scientist","Research Scientist","MLOps Engineer"]},
+  {id:"ds",name:"Data Science",icon:"🔬",color:"#06b6d4",desc:"Extract actionable insights from complex datasets",industries:["Healthcare","Finance","Retail","Government"],skills:["Python","SQL","Pandas","Tableau","Statistics"],jobs:["Data Analyst","Data Scientist","Business Analyst","BI Developer"]},
+  {id:"cs",name:"Cybersecurity",icon:"🔐",color:"#ef4444",desc:"Defend systems from digital threats and attacks",industries:["Defense","Banking","Healthcare","Government"],skills:["Networking","Ethical Hacking","Cryptography","SIEM","Python"],jobs:["Security Analyst","Pen Tester","SOC Analyst","Security Engineer"]},
+  {id:"bc",name:"Blockchain",icon:"⛓️",color:"#f59e0b",desc:"Build decentralized, trustless Web3 systems",industries:["Finance","Supply Chain","Healthcare","Legal"],skills:["Solidity","Web3.js","Smart Contracts","Cryptography","Node.js"],jobs:["Blockchain Dev","Smart Contract Auditor","DeFi Engineer","Web3 Full Stack"]},
+  {id:"iot",name:"IoT",icon:"📡",color:"#10b981",desc:"Connect physical and digital worlds at scale",industries:["Manufacturing","Agriculture","Smart Cities","Healthcare"],skills:["Embedded C","Arduino","MQTT","Cloud Platforms","Networking"],jobs:["IoT Engineer","Embedded Developer","Solutions Architect","Firmware Dev"]},
+  {id:"sd",name:"Software Development",icon:"💻",color:"#6366f1",desc:"Build scalable apps loved by millions",industries:["All Industries","Startups","Enterprise","SaaS"],skills:["React","Node.js","Databases","System Design","DevOps"],jobs:["SDE","Full Stack Dev","Backend Engineer","DevOps Engineer"]},
+];
+
+const QUIZ=[
+  {q:"What type of problems excite you most?",opts:["Making machines think & learn","Analyzing patterns & trends","Securing digital systems","Building apps for people","Connecting physical devices","Financial decentralization","Predicting future outcomes"],map:["ai","ds","cs","sd","iot","bc","ml"]},
+  {q:"Which project sounds most thrilling?",opts:["A chatbot that understands emotion","A fraud detection engine","A penetration testing toolkit","A social media platform","A smart home controller","A crypto payment system","A data visualization dashboard"],map:["ai","ml","cs","sd","iot","bc","ds"]},
+  {q:"Your preferred working style?",opts:["Research & experimentation","Problem-solving with data","Defensive security tactics","Building & shipping products","Hardware + software fusion","Decentralized protocols","Data storytelling & insights"],map:["ai","ds","cs","sd","iot","bc","ml"]},
+  {q:"Which subject do you love most?",opts:["Mathematics & algorithms","Statistics & probability","Networks & system security","Web technologies","Electronics & embedded","Cryptography & protocols","Data structures & analysis"],map:["ai","ds","cs","sd","iot","bc","ml"]},
+  {q:"Your dream company type?",opts:["AI research lab","Data consultancy firm","Cybersecurity firm","Product startup","IoT hardware company","DeFi / Web3 protocol","Big Tech data team"],map:["ai","ds","cs","sd","iot","bc","ml"]},
+];
+
+const ROADMAPS={
+  ai:[
+    {title:"Python & Math Foundations",weeks:"Weeks 1–8",topics:["Python Basics","Linear Algebra","Calculus","Probability & Stats"],tasks:["Build calculator app","Solve 20 coding problems","Create data visualizations"],project:"Matplotlib Data Dashboard",status:"locked"},
+    {title:"ML Fundamentals",weeks:"Weeks 9–16",topics:["Supervised Learning","Regression","Classification","Scikit-learn"],tasks:["Implement Linear Regression","Build spam detector","Evaluate models with metrics"],project:"House Price Predictor",status:"locked"},
+    {title:"Deep Learning",weeks:"Weeks 17–24",topics:["Neural Networks","CNNs","RNNs","TensorFlow / Keras"],tasks:["Image classifier","Train LSTM for text generation","Compare architectures"],project:"MNIST Digit Recognizer",status:"locked"},
+    {title:"NLP & Computer Vision",weeks:"Weeks 25–32",topics:["Text Processing","Transformers","Object Detection","BERT"],tasks:["Sentiment analysis app","Face detection pipeline","Fine-tune BERT"],project:"AI Chatbot with BERT",status:"locked"},
+    {title:"MLOps & Deployment",weeks:"Weeks 33–40",topics:["Docker","REST APIs","Model Serving","FastAPI"],tasks:["Containerize ML model","Deploy to HuggingFace Spaces","Set up CI pipeline"],project:"Production ML API",status:"locked"},
+    {title:"Portfolio & Career Prep",weeks:"Weeks 41–48",topics:["System Design","ML Interviews","Open Source","Portfolio Building"],tasks:["Contribute to open source","10 mock interviews","Write 3 technical blogs"],project:"End-to-end AI Product",status:"locked"},
+  ],
+  sd:[
+    {title:"Web Fundamentals",weeks:"Weeks 1–8",topics:["HTML/CSS","JavaScript ES6+","Git & GitHub","Responsive Design"],tasks:["Build portfolio site","Clone 3 landing pages","Push daily commits"],project:"Personal Portfolio",status:"locked"},
+    {title:"React & Frontend",weeks:"Weeks 9–16",topics:["React","Hooks","State Management","API Integration"],tasks:["Weather app with API","Todo app + local storage","Component library"],project:"E-commerce Frontend",status:"locked"},
+    {title:"Backend Development",weeks:"Weeks 17–24",topics:["Node.js","Express","REST APIs","MongoDB / PostgreSQL"],tasks:["CRUD API","Auth system","Database design"],project:"Full Stack Blog",status:"locked"},
+    {title:"Advanced Topics",weeks:"Weeks 25–32",topics:["System Design","Redis","Microservices","Authentication"],tasks:["Design Twitter clone","Implement JWT auth","Add caching layer"],project:"Real-time Chat App",status:"locked"},
+    {title:"DevOps & Launch",weeks:"Weeks 33–40",topics:["Docker","CI/CD","AWS Basics","Performance"],tasks:["Deploy to cloud","Setup CI pipeline","Load testing"],project:"Deployed SaaS Product",status:"locked"},
+  ],
+  ds:[
+    {title:"Python & Statistics",weeks:"Weeks 1–8",topics:["Python","NumPy","Pandas","Descriptive Statistics"],tasks:["Analyze a CSV dataset","Build summary reports","Data profiling"],project:"EDA on Real Dataset",status:"locked"},
+    {title:"Data Wrangling",weeks:"Weeks 9–16",topics:["Data Cleaning","SQL","Feature Engineering","Matplotlib/Seaborn"],tasks:["Clean messy dataset","Write complex SQL queries","Create charts"],project:"Sales Dashboard",status:"locked"},
+    {title:"Machine Learning",weeks:"Weeks 17–24",topics:["Regression","Classification","Clustering","Model Evaluation"],tasks:["3 ML models","Compare performance","Hyperparameter tuning"],project:"Customer Churn Predictor",status:"locked"},
+    {title:"Advanced Analytics",weeks:"Weeks 25–32",topics:["Time Series","A/B Testing","Bayesian Stats","NLP Basics"],tasks:["Stock price forecast","Run A/B test simulation","Text classification"],project:"Market Trend Analyzer",status:"locked"},
+    {title:"Tools & Portfolio",weeks:"Weeks 33–40",topics:["Tableau","Power BI","Airflow","BigQuery"],tasks:["Tableau dashboard","Data pipeline","Capstone project"],project:"End-to-end Data Product",status:"locked"},
+  ],
+};
+const getRoadmap=(id)=>ROADMAPS[id]||ROADMAPS.ai;
+
+const INTERNSHIPS=[
+  {company:"Google",role:"AI/ML Intern",domain:"ai",status:"Open",stipend:"₹40,000/mo",duration:"2 months",logo:"G"},
+  {company:"Microsoft",role:"SWE Intern",domain:"sd",status:"Open",stipend:"₹35,000/mo",duration:"2 months",logo:"M"},
+  {company:"Deloitte",role:"Data Science Intern",domain:"ds",status:"Open",stipend:"₹30,000/mo",duration:"3 months",logo:"D"},
+  {company:"Palo Alto",role:"Cybersecurity Intern",domain:"cs",status:"Closed",stipend:"₹32,000/mo",duration:"2 months",logo:"P"},
+  {company:"Chainlink",role:"Blockchain Dev Intern",domain:"bc",status:"Open",stipend:"₹28,000/mo",duration:"2 months",logo:"C"},
+  {company:"Bosch",role:"IoT Engineer Intern",domain:"iot",status:"Open",stipend:"₹25,000/mo",duration:"3 months",logo:"B"},
+];
+
+const SUCCESS=[
+  {name:"Priya S.",domain:"AI",outcome:"ML Engineer @ Amazon",duration:"11 months",quote:"DomaneX gave me the exact roadmap. Weekly tasks kept me consistent and accountable."},
+  {name:"Rahul M.",domain:"Data Science",outcome:"Data Analyst @ Swiggy",duration:"8 months",quote:"The skill gap analysis was eye-opening. I filled the gaps and landed my dream role."},
+  {name:"Anjali R.",domain:"Cybersecurity",outcome:"Security Analyst @ HDFC",duration:"10 months",quote:"The demo internship gave me confidence. The interview prep was spot-on."},
+  {name:"Kiran P.",domain:"Software Dev",outcome:"SDE-1 @ Flipkart",duration:"9 months",quote:"From zero to production-ready in less than a year. Projects made my portfolio shine."},
+];
+
+const EVENTS=[
+  {name:"Smart India Hackathon 2025",type:"Hackathon",date:"Mar 15",loc:"Pan India",prize:"₹1,00,000",domain:"all"},
+  {name:"ML Summit India",type:"Workshop",date:"Apr 2",loc:"Bangalore",prize:"Free",domain:"ai"},
+  {name:"Web3 Builders Meetup",type:"Meetup",date:"Apr 10",loc:"Mumbai",prize:"Free",domain:"bc"},
+  {name:"CyberSec CTF Challenge",type:"Hackathon",date:"Apr 20",loc:"Online",prize:"₹50,000",domain:"cs"},
+  {name:"Data Science Bootcamp",type:"Workshop",date:"May 5",loc:"Hyderabad",prize:"₹2,000",domain:"ds"},
+];
+
+const COMMUNITY=[
+  {user:"AlexK",domain:"AI",time:"2h ago",content:"Completed Month 4! My CNN hit 98.7% on MNIST 🔥 the roadmap structure really works",likes:24,replies:7,avatar:"A"},
+  {user:"SnehaP",domain:"Data Science",time:"5h ago",content:"Stuck on feature engineering for imbalanced datasets. SMOTE vs class weights — any advice?",likes:8,replies:12,avatar:"S"},
+  {user:"DevR",domain:"Soft Dev",time:"1d ago",content:"Deployed my first full-stack app to AWS! The demo internship tasks pushed me to actually ship it 🚀",likes:45,replies:15,avatar:"D"},
+  {user:"MayaT",domain:"Cybersecurity",time:"1d ago",content:"Passed the CEH practice test with 87%! Resources on the platform are absolutely 🔥",likes:32,replies:9,avatar:"M"},
+];
+
+const IQ={
+  ai:["Explain supervised vs unsupervised learning.","What is the vanishing gradient problem?","How does a transformer model work?","Explain overfitting and how to prevent it.","What is the bias-variance tradeoff?"],
+  sd:["Explain REST vs GraphQL.","What is the event loop in Node.js?","How would you design a URL shortener?","Explain SOLID principles.","What's the difference between auth and authn?"],
+  ds:["Difference between correlation and causation?","Explain p-value in hypothesis testing.","How do you handle missing data?","What is cross-validation?","Explain Type I vs Type II errors."],
+  cs:["What is a SQL injection attack?","Explain public key cryptography.","What is the difference between IDS and IPS?","How does a VPN work?","What is OWASP Top 10?"],
+};
+
+const RESOURCES={
+  ai:{
+    beginner:[{t:"Python for Everybody",p:"Coursera / U Michigan",type:"course"},{t:"Neural Networks: Zero to Hero",p:"Andrej Karpathy",type:"video"},{t:"ML Crash Course",p:"Google Developers",type:"article"}],
+    intermediate:[{t:"Deep Learning Specialization",p:"Andrew Ng / Coursera",type:"course"},{t:"CS231n: Computer Vision",p:"Stanford / YouTube",type:"video"},{t:"The Illustrated Transformer",p:"Jay Alammar's Blog",type:"article"}],
+    advanced:[{t:"Full Stack LLM Bootcamp",p:"LLM Bootcamp",type:"course"},{t:"Attention Is All You Need",p:"ArXiv Paper",type:"article"},{t:"Building GPT from Scratch",p:"Andrej Karpathy",type:"video"}],
+  },
+  sd:{
+    beginner:[{t:"The Odin Project",p:"theodinproject.com",type:"course"},{t:"React Full Course 2024",p:"YouTube",type:"video"},{t:"JavaScript.info",p:"javascript.info",type:"article"}],
+    intermediate:[{t:"Node.js & Express Masterclass",p:"Udemy",type:"course"},{t:"System Design for Beginners",p:"ByteByteGo",type:"video"},{t:"Clean Code Principles",p:"Dev.to",type:"article"}],
+    advanced:[{t:"AWS Solutions Architect",p:"AWS Training",type:"course"},{t:"Designing Data-Intensive Apps",p:"O'Reilly",type:"article"},{t:"Microservices Architecture",p:"GOTO Conf",type:"video"}],
+  },
+  ds:{
+    beginner:[{t:"Python Data Science Handbook",p:"O'Reilly (free online)",type:"article"},{t:"Statistics for Data Science",p:"YouTube",type:"video"},{t:"Kaggle Learn",p:"Kaggle",type:"course"}],
+    intermediate:[{t:"SQL for Data Scientists",p:"Udemy",type:"course"},{t:"StatQuest with Josh Starmer",p:"YouTube",type:"video"},{t:"Towards Data Science Blog",p:"Medium",type:"article"}],
+    advanced:[{t:"Feature Engineering for ML",p:"O'Reilly",type:"course"},{t:"Time Series Forecasting",p:"Coursera",type:"course"},{t:"Causal Inference Paper",p:"ArXiv",type:"article"}],
+  },
+};
+const getResources=(id)=>RESOURCES[id]||RESOURCES.ai;
+
+// ========== UTILS ==========
+const storage={
+  get:(k)=>{try{const v=localStorage.getItem("dx_"+k);return v?JSON.parse(v):null}catch{return null}},
+  set:(k,v)=>{try{localStorage.setItem("dx_"+k,JSON.stringify(v))}catch{}},
+  clear:()=>{Object.keys(localStorage).filter(k=>k.startsWith("dx_")).forEach(k=>localStorage.removeItem(k))},
+};
+
+// ========== TOAST ==========
+function Toast({msg,onClose}){
+  useEffect(()=>{const t=setTimeout(onClose,3000);return()=>clearTimeout(t)},[]);
+  return <div className="toast">✅ {msg}</div>;
+}
+
+// ========== PROGRESS RING ==========
+function Ring({pct,size=120,stroke=8,color="#4f8ef7"}){
+  const r=(size-stroke*2)/2,c=2*Math.PI*r,offset=c-(pct/100)*c;
+  return(
+    <div style={{position:"relative",width:size,height:size}}>
+      <svg width={size} height={size} style={{transform:"rotate(-90deg)"}}>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#ffffff10" strokeWidth={stroke}/>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={stroke}
+          strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round"
+          style={{transition:"stroke-dashoffset 0.8s ease"}}/>
+      </svg>
+      <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+        <span style={{fontSize:"1.4rem",fontWeight:800,color:"#f0f4ff"}}>{pct}%</span>
+        <span style={{fontSize:"0.65rem",color:"#8896b3"}}>done</span>
+      </div>
+    </div>
+  );
+}
+
+// ========== NAV ==========
+function Nav({page,setPage,user,onReset}){
+  const navItems=[
+    {id:"dashboard",label:"Dashboard"},
+    {id:"roadmap",label:"Roadmap"},
+    {id:"resources",label:"Resources"},
+    {id:"internships",label:"Internships"},
+    {id:"resume",label:"Resume"},
+    {id:"interview",label:"Interview"},
+    {id:"community",label:"Community"},
+    {id:"events",label:"Events"},
+    {id:"profile",label:"Profile"},
+  ];
+  return(
+    <nav className="nav">
+      <div className="container">
+        <div className="nav-inner">
+          <span className="nav-logo" style={{cursor:"pointer"}} onClick={()=>setPage("dashboard")}>DomaneX</span>
+          <div className="nav-links hide-mobile">
+            {navItems.map(n=><button key={n.id} className={`nav-link ${page===n.id?"active":""}`} onClick={()=>setPage(n.id)}>{n.label}</button>)}
+          </div>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            <div style={{width:32,height:32,borderRadius:"50%",background:"var(--grad)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.8rem",fontWeight:700}}>{(user?.name||"U")[0]}</div>
+            <button className="btn btn-ghost btn-sm" onClick={onReset} style={{fontSize:"0.75rem"}}>Switch Domain</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+// ========== LANDING ==========
+function Landing({onStart}){
+  return(
+    <div style={{minHeight:"100vh",position:"relative",overflow:"hidden"}}>
+      <div className="hero-orb" style={{width:600,height:600,background:"#4f8ef7",top:-200,left:-100}}/>
+      <div className="hero-orb" style={{width:400,height:400,background:"#8b5cf6",bottom:-100,right:-100}}/>
+      <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"20px 40px",display:"flex",justifyContent:"space-between",alignItems:"center",background:"var(--bg)99",backdropFilter:"blur(20px)",borderBottom:"0.5px solid var(--border)"}}>
+        <span style={{fontSize:"1.4rem",fontWeight:800,background:"var(--grad)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>DomaneX</span>
+        <button className="btn btn-primary btn-sm" onClick={onStart}>Get Started →</button>
+      </nav>
+      <div className="hero fade-in">
+        <div style={{maxWidth:800,position:"relative",zIndex:1}}>
+          <div className="badge badge-blue" style={{marginBottom:24,fontSize:"0.8rem"}}>🚀 For Engineering Students</div>
+          <h1 className="h1" style={{marginBottom:20}}>
+            Discover Your Domain.<br/>
+            <span className="gradient-text">Build Your Future.</span>
+          </h1>
+          <p className="body" style={{fontSize:"1.1rem",maxWidth:540,margin:"0 auto 40px",color:"#8896b3"}}>
+            AI-powered career guidance for CS & engineering students. Get a personalized roadmap, track your growth, and land your dream role.
+          </p>
+          <div style={{display:"flex",gap:16,justifyContent:"center",flexWrap:"wrap"}}>
+            <button className="btn btn-primary" style={{fontSize:"1rem",padding:"16px 32px"}} onClick={onStart}>Start Your Journey →</button>
+            <button className="btn btn-secondary" onClick={()=>{}}>Watch Demo ▶</button>
+          </div>
+          <div style={{marginTop:60,display:"flex",gap:48,justifyContent:"center",flexWrap:"wrap"}}>
+            {[["10,000+","Students"],["15+","Career Paths"],["500+","Resources"],["95%","Placement Rate"]].map(([n,l])=>(
+              <div key={l} style={{textAlign:"center"}}>
+                <div style={{fontSize:"1.8rem",fontWeight:800,background:"var(--grad)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{n}</div>
+                <div style={{fontSize:"0.8rem",color:"#8896b3"}}>{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <section style={{padding:"80px 40px",background:"var(--bg2)"}}>
+        <div style={{maxWidth:1000,margin:"0 auto",textAlign:"center"}}>
+          <h2 className="h2" style={{marginBottom:16}}>Your journey, <span className="gradient-text">structured.</span></h2>
+          <p className="body" style={{marginBottom:48}}>From discovery to your first job — we guide every step.</p>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:20}}>
+            {[["🧠","Discover","Take a quiz to find your ideal domain"],["🗺️","Roadmap","Get a week-by-week learning plan"],["📊","Track","Visual progress dashboard & streak"],["💼","Prepare","Demo internships + interview prep"],["📄","Resume","Auto-built ATS-friendly resume"],["🚀","Launch","Get noticed by top companies"]].map(([icon,title,desc])=>(
+              <div className="card" key={title} style={{textAlign:"center"}}>
+                <div style={{fontSize:"2rem",marginBottom:12}}>{icon}</div>
+                <div className="h4" style={{marginBottom:8}}>{title}</div>
+                <div className="small">{desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section style={{padding:"80px 40px",textAlign:"center"}}>
+        <div style={{maxWidth:800,margin:"0 auto"}}>
+          <h2 className="h2" style={{marginBottom:16}}>Success stories</h2>
+          <p className="body" style={{marginBottom:48}}>Real students. Real outcomes.</p>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:20}}>
+            {SUCCESS.map(s=>(
+              <div className="card" key={s.name} style={{textAlign:"left"}}>
+                <div style={{display:"flex",gap:12,alignItems:"center",marginBottom:12}}>
+                  <div style={{width:40,height:40,borderRadius:"50%",background:"var(--grad)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>{s.name[0]}</div>
+                  <div><div className="h4">{s.name}</div><div className="small badge badge-green" style={{marginTop:2}}>{s.outcome}</div></div>
+                </div>
+                <p className="body" style={{fontSize:"0.87rem",fontStyle:"italic",marginBottom:12}}>"{s.quote}"</p>
+                <div style={{display:"flex",gap:8}}><span className="badge badge-blue">{s.domain}</span><span className="badge badge-purple">{s.duration}</span></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section style={{padding:"80px 40px",textAlign:"center",background:"var(--bg2)"}}>
+        <h2 className="h2" style={{marginBottom:16}}>Ready to find your <span className="gradient-text">domain?</span></h2>
+        <p className="body" style={{marginBottom:32}}>Join 10,000+ students already on their journey.</p>
+        <button className="btn btn-primary" style={{fontSize:"1rem",padding:"16px 32px"}} onClick={onStart}>Start Free Today →</button>
+      </section>
+    </div>
+  );
+}
+
+// ========== ONBOARDING ==========
+function Onboarding({onComplete}){
+  const [step,setStep]=useState(0);
+  const [path,setPath]=useState(null);
+  const [selected,setSelected]=useState(null);
+  const [quizIdx,setQuizIdx]=useState(0);
+  const [answers,setAnswers]=useState([]);
+  const [goal,setGoal]=useState("job");
+  const [name,setName]=useState("");
+  const [uname,setUname]=useState("");
+
+  const pickDomain=(id)=>{
+    if(path==="sure"){
+      setSelected(id);setStep(3);
+    }else{
+      const scores={};answers.forEach((a,i)=>{const d=QUIZ[i].map[a];scores[d]=(scores[d]||0)+1;});
+      const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+      setSelected(sorted[0]?.[0]||id);setStep(3);
+    }
+  };
+
+  const handleQuiz=(idx)=>{
+    const na=[...answers,idx];setAnswers(na);
+    if(quizIdx<QUIZ.length-1){setQuizIdx(quizIdx+1);}
+    else{
+      const scores={};na.forEach((a,i)=>{const d=QUIZ[i].map[a];scores[d]=(scores[d]||0)+1;});
+      const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+      setSelected(sorted[0]?.[0]||"ai");setStep(path==="sure"?3:25);
+    }
+  };
+
+  const finish=()=>{
+    const d=DOMAINS.find(x=>x.id===selected)||DOMAINS[0];
+    onComplete({name,username:uname,domain:selected,domainData:d,goal,progress:0,completedTasks:[],weeklyStreak:0,joinDate:new Date().toISOString()});
+  };
+
+  return(
+    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
+      <div style={{maxWidth:640,width:"100%",background:"var(--card)",border:"0.5px solid var(--border)",borderRadius:24,padding:40}} className="fade-in">
+        <div style={{textAlign:"center",marginBottom:8}}>
+          <span style={{fontSize:"1.2rem",fontWeight:800,background:"var(--grad)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>DomaneX</span>
+        </div>
+
+        {step===0&&(
+          <div className="fade-in">
+            <h2 className="h2" style={{textAlign:"center",marginBottom:8}}>Welcome! Let's get started.</h2>
+            <p className="body" style={{textAlign:"center",marginBottom:32}}>Create your profile to personalize your journey.</p>
+            <div style={{marginBottom:16}}><label className="label">Your full name</label><input className="input" value={name} onChange={e=>setName(e.target.value)} placeholder="e.g. Aarav Patel"/></div>
+            <div style={{marginBottom:24}}><label className="label">Username</label><input className="input" value={uname} onChange={e=>setUname(e.target.value)} placeholder="e.g. aarav_dev"/></div>
+            <button className="btn btn-primary" style={{width:"100%"}} disabled={!name||!uname} onClick={()=>setStep(1)}>Continue →</button>
+          </div>
+        )}
+
+        {step===1&&(
+          <div className="fade-in">
+            <h2 className="h2" style={{textAlign:"center",marginBottom:8}}>Know your interests?</h2>
+            <p className="body" style={{textAlign:"center",marginBottom:32}}>This helps us find the right domain for you.</p>
+            <div style={{display:"flex",flexDirection:"column",gap:12}}>
+              <button className="card" style={{cursor:"pointer",textAlign:"left",borderColor:"var(--blue)"}} onClick={()=>{setPath("sure");setStep(2);}}>
+                <div className="h3">✅ I know my interest</div>
+                <p className="body" style={{fontSize:"0.85rem",marginTop:4}}>Browse domains and pick what excites you most</p>
+              </button>
+              <button className="card" style={{cursor:"pointer",textAlign:"left"}} onClick={()=>{setPath("unsure");setStep(10);}}>
+                <div className="h3">🤔 I'm not sure yet</div>
+                <p className="body" style={{fontSize:"0.85rem",marginTop:4}}>Take our 5-question quiz to discover your fit</p>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step===2&&(
+          <div className="fade-in">
+            <h2 className="h2" style={{marginBottom:8}}>Choose your domain</h2>
+            <p className="body" style={{marginBottom:24}}>Pick what excites you most.</p>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:12}}>
+              {DOMAINS.map(d=>(
+                <button key={d.id} className="card" style={{cursor:"pointer",textAlign:"left",borderColor:selected===d.id?d.color:"var(--border)"}} onClick={()=>setSelected(d.id)}>
+                  <div style={{fontSize:"1.5rem",marginBottom:6}}>{d.icon}</div>
+                  <div className="h4">{d.name}</div>
+                  <p className="small" style={{marginTop:4}}>{d.desc}</p>
+                </button>
+              ))}
+            </div>
+            <button className="btn btn-primary" style={{width:"100%",marginTop:20}} disabled={!selected} onClick={()=>setStep(3)}>Continue →</button>
+          </div>
+        )}
+
+        {step===10&&(
+          <div className="fade-in">
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+              <span className="small">Question {quizIdx+1} of {QUIZ.length}</span>
+              <span className="small">{Math.round((quizIdx/QUIZ.length)*100)}%</span>
+            </div>
+            <div className="progress-bar" style={{marginBottom:24}}><div className="progress-fill" style={{width:`${(quizIdx/QUIZ.length)*100}%`}}/></div>
+            <h3 className="h3" style={{marginBottom:20}}>{QUIZ[quizIdx].q}</h3>
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
+              {QUIZ[quizIdx].opts.map((o,i)=>(
+                <button key={i} className="card card-sm" style={{cursor:"pointer",textAlign:"left",transition:"all 0.15s"}} onClick={()=>handleQuiz(i)}
+                  onMouseEnter={e=>e.currentTarget.style.borderColor="var(--blue)"} onMouseLeave={e=>e.currentTarget.style.borderColor="var(--border)"}>
+                  <span style={{marginRight:8,color:"var(--text3)",fontSize:"0.8rem",fontFamily:"var(--mono)"}}>{String.fromCharCode(65+i)}</span>{o}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {step===25&&(
+          <div className="fade-in">
+            <h2 className="h2" style={{marginBottom:8}}>Your top matches 🎯</h2>
+            <p className="body" style={{marginBottom:24}}>Based on your answers, here are the best domains for you:</p>
+            {(()=>{
+              const scores={};answers.forEach((a,i)=>{const d=QUIZ[i].map[a];scores[d]=(scores[d]||0)+1;});
+              const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,3);
+              return sorted.map(([id,sc],idx)=>{
+                const d=DOMAINS.find(x=>x.id===id);if(!d)return null;
+                return(
+                  <button key={id} className="card" style={{cursor:"pointer",textAlign:"left",marginBottom:12,width:"100%",borderColor:selected===id?d.color:"var(--border)"}} onClick={()=>setSelected(id)}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+                      <div style={{display:"flex",gap:12,alignItems:"center"}}>
+                        <span style={{fontSize:"1.8rem"}}>{d.icon}</span>
+                        <div><div className="h4">{d.name}</div><p className="small">{d.desc}</p></div>
+                      </div>
+                      <span className="badge badge-blue">{idx===0?"Best Match":idx===1?"2nd Match":"3rd Match"}</span>
+                    </div>
+                  </button>
+                );
+              });
+            })()}
+            <button className="btn btn-primary" style={{width:"100%",marginTop:8}} disabled={!selected} onClick={()=>setStep(3)}>Confirm Domain →</button>
+          </div>
+        )}
+
+        {step===3&&(()=>{
+          const d=DOMAINS.find(x=>x.id===selected)||DOMAINS[0];
+          return(
+            <div className="fade-in">
+              <div style={{textAlign:"center",marginBottom:24}}>
+                <div style={{fontSize:"3rem",marginBottom:8}}>{d.icon}</div>
+                <h2 className="h2" style={{marginBottom:4}}>You're a <span style={{color:d.color}}>{d.name}</span> fit!</h2>
+                <p className="body">{d.desc}</p>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:24}}>
+                <div className="card card-sm"><div className="small" style={{marginBottom:8}}>🏭 Industries</div>{d.industries.map(i=><div key={i} className="badge badge-blue" style={{marginRight:4,marginBottom:4}}>{i}</div>)}</div>
+                <div className="card card-sm"><div className="small" style={{marginBottom:8}}>💼 Roles</div>{d.jobs.map(j=><div key={j} className="badge badge-purple" style={{marginRight:4,marginBottom:4}}>{j}</div>)}</div>
+              </div>
+              <div className="card card-sm" style={{marginBottom:24}}><div className="small" style={{marginBottom:8}}>🛠️ Key Skills</div><div>{d.skills.map(s=><span key={s} className="badge badge-cyan" style={{marginRight:4,marginBottom:4}}>{s}</span>)}</div></div>
+              <button className="btn btn-primary" style={{width:"100%"}} onClick={()=>setStep(4)}>Set My Goal →</button>
+            </div>
+          );
+        })()}
+
+        {step===4&&(
+          <div className="fade-in">
+            <h2 className="h2" style={{marginBottom:8}}>Set your goal</h2>
+            <p className="body" style={{marginBottom:24}}>What are you working towards?</p>
+            <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:24}}>
+              {[["job","💼 Get a Job","Land a role at a top company within 12 months"],["startup","🚀 Build a Startup","Launch your own product or venture"],["freelance","💻 Freelance","Build skills and work on independent projects"],["research","🔬 Research","Pursue higher studies or academic research"]].map(([v,t,d])=>(
+                <button key={v} className="card card-sm" style={{cursor:"pointer",textAlign:"left",borderColor:goal===v?"var(--blue)":"var(--border)"}} onClick={()=>setGoal(v)}>
+                  <div className="h4">{t}</div><p className="small">{d}</p>
+                </button>
+              ))}
+            </div>
+            <button className="btn btn-primary" style={{width:"100%"}} onClick={finish}>Launch My Roadmap 🚀</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ========== DASHBOARD ==========
+function Dashboard({user,setUser,setPage}){
+  const d=user.domainData;
+  const roadmap=getRoadmap(user.domain);
+  const progress=user.progress||0;
+  const completedCount=Math.floor(roadmap.length*(progress/100));
+  const streak=user.weeklyStreak||0;
+  const today=new Date();
+
+  const tasks=[
+    {id:1,text:"Complete Python basics module",due:"Today",done:false},
+    {id:2,text:"Watch TensorFlow intro video",due:"Today",done:true},
+    {id:3,text:"Solve 5 coding problems on LeetCode",due:"Tomorrow",done:false},
+    {id:4,text:"Read Chapter 2: Linear Algebra",due:"This Week",done:false},
+  ];
+
+  const [taskList,setTaskList]=useState(tasks);
+
+  const toggleTask=(id)=>{
+    const updated=taskList.map(t=>t.id===id?{...t,done:!t.done}:t);
+    setTaskList(updated);
+    const donePct=Math.min(100,Math.round((updated.filter(t=>t.done).length/updated.length)*100*0.2+progress));
+    setUser(u=>({...u,progress:donePct}));
+    storage.set("user",{...user,progress:donePct});
+  };
+
+  return(
+    <div style={{padding:"32px 0"}} className="fade-in">
+      <div className="container">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:32,flexWrap:"wrap",gap:16}}>
+          <div>
+            <h1 className="h2">Welcome back, {user.name.split(" ")[0]} 👋</h1>
+            <p className="body">{today.toLocaleDateString("en-IN",{weekday:"long",year:"numeric",month:"long",day:"numeric"})}</p>
+          </div>
+          <div style={{display:"flex",gap:10}}>
+            <button className="btn btn-secondary btn-sm" onClick={()=>setPage("roadmap")}>View Roadmap</button>
+            <button className="btn btn-primary btn-sm" onClick={()=>setPage("resume")}>Build Resume</button>
+          </div>
+        </div>
+
+        {/* Stats Row */}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:16,marginBottom:32}}>
+          {[
+            {label:"Overall Progress",val:`${progress}%`,icon:"📈",color:"var(--blue)"},
+            {label:"Phases Done",val:`${completedCount}/${roadmap.length}`,icon:"✅",color:"var(--green)"},
+            {label:"Weekly Streak",val:`${streak} weeks`,icon:"🔥",color:"var(--amber)"},
+            {label:"Domain",val:d.name.split(" ")[0],icon:d.icon,color:d.color},
+          ].map(s=>(
+            <div className="card" key={s.label} style={{display:"flex",alignItems:"center",gap:16}}>
+              <div style={{fontSize:"1.8rem"}}>{s.icon}</div>
+              <div><div style={{fontSize:"1.4rem",fontWeight:700,color:s.color}}>{s.val}</div><div className="small">{s.label}</div></div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:24}}>
+          <div>
+            {/* Current Phase */}
+            <div className="card" style={{marginBottom:20}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+                <h3 className="h3">📍 Current Phase</h3>
+                <span className="badge badge-blue">In Progress</span>
+              </div>
+              {roadmap[Math.max(0,completedCount-0)]&&(
+                <div>
+                  <div className="h4" style={{marginBottom:4}}>{roadmap[Math.min(completedCount,roadmap.length-1)].title}</div>
+                  <p className="small" style={{marginBottom:16}}>{roadmap[Math.min(completedCount,roadmap.length-1)].weeks}</p>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:16}}>
+                    {roadmap[Math.min(completedCount,roadmap.length-1)].topics.map(t=><span key={t} className="badge badge-cyan">{t}</span>)}
+                  </div>
+                  <div className="progress-bar"><div className="progress-fill" style={{width:`${progress}%`}}/></div>
+                  <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
+                    <span className="small">Phase progress</span><span className="small">{progress}%</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Today's Tasks */}
+            <div className="card">
+              <h3 className="h3" style={{marginBottom:16}}>📋 Today's Tasks</h3>
+              {taskList.map(t=>(
+                <div key={t.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:"0.5px solid var(--border)"}}>
+                  <button onClick={()=>toggleTask(t.id)} style={{width:20,height:20,borderRadius:6,background:t.done?"var(--green)":"transparent",border:"1.5px solid "+(t.done?"var(--green)":"var(--border2)"),cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:"0.7rem",flexShrink:0}}>
+                    {t.done?"✓":""}
+                  </button>
+                  <span style={{flex:1,textDecoration:t.done?"line-through":"none",color:t.done?"var(--text3)":"var(--text)",fontSize:"0.9rem"}}>{t.text}</span>
+                  <span className="small" style={{color:t.due==="Today"?"var(--amber)":"var(--text3)"}}>{t.due}</span>
+                </div>
+              ))}
+              <button className="btn btn-ghost btn-sm" style={{marginTop:12,color:"var(--blue)"}} onClick={()=>setPage("roadmap")}>View full roadmap →</button>
+            </div>
+          </div>
+
+          <div style={{display:"flex",flexDirection:"column",gap:20}}>
+            {/* Progress Ring */}
+            <div className="card" style={{textAlign:"center"}}>
+              <h3 className="h3" style={{marginBottom:16}}>Journey Progress</h3>
+              <div style={{display:"flex",justifyContent:"center",marginBottom:16}}><Ring pct={progress}/></div>
+              <div style={{display:"flex",justifyContent:"space-around"}}>
+                <div><div style={{fontWeight:700,color:"var(--green)"}}>{completedCount}</div><div className="small">Completed</div></div>
+                <div><div style={{fontWeight:700,color:"var(--blue)"}}>{roadmap.length-completedCount}</div><div className="small">Remaining</div></div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="card">
+              <h3 className="h3" style={{marginBottom:12}}>Quick Actions</h3>
+              <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                {[["📄","Build Resume",()=>setPage("resume")],["🎤","Interview Prep",()=>setPage("interview")],["💼","Internships",()=>setPage("internships")],["👥","Community",()=>setPage("community")]].map(([icon,label,action])=>(
+                  <button key={label} className="card card-sm" style={{cursor:"pointer",display:"flex",alignItems:"center",gap:10,padding:"10px 12px"}} onClick={action}>
+                    <span>{icon}</span><span style={{fontSize:"0.85rem",fontWeight:500}}>{label}</span><span style={{marginLeft:"auto",color:"var(--text3)"}}>›</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Skill Gaps */}
+            <div className="card">
+              <h3 className="h3" style={{marginBottom:12}}>Skill Gap</h3>
+              {d.skills.slice(0,4).map((s,i)=>{
+                const pct=Math.max(10,Math.min(90,progress+(i*10)-15));
+                return(
+                  <div key={s} style={{marginBottom:10}}>
+                    <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:"0.8rem"}}>{s}</span><span style={{fontSize:"0.75rem",color:"var(--text3)"}}>{pct}%</span></div>
+                    <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`,background:pct>60?"var(--grad)":"linear-gradient(135deg,var(--amber),var(--red))"}}/></div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ========== ROADMAP ==========
+function RoadmapPage({user,setUser}){
+  const roadmap=getRoadmap(user.domain);
+  const completedCount=Math.floor(roadmap.length*(user.progress/100));
+  const [expanded,setExpanded]=useState(0);
+
+  const markDone=(idx)=>{
+    const newDone=idx+1;
+    const newPct=Math.round((newDone/roadmap.length)*100);
+    const updated={...user,progress:Math.max(user.progress,newPct)};
+    setUser(updated);storage.set("user",updated);
+  };
+
+  return(
+    <div style={{padding:"32px 0"}} className="fade-in">
+      <div className="container">
+        <div style={{marginBottom:32}}>
+          <h1 className="h2">Your Roadmap 🗺️</h1>
+          <p className="body">{user.domainData.name} — {roadmap.length} phases over {user.domainData.id==="sd"?"10":"12"} months</p>
+        </div>
+        <div style={{display:"flex",gap:12,alignItems:"center",marginBottom:32,flexWrap:"wrap"}}>
+          <div style={{flex:1,minWidth:200}}>
+            <div className="progress-bar" style={{height:10}}><div className="progress-fill" style={{width:`${user.progress}%`}}/></div>
+          </div>
+          <span className="h4">{user.progress}% Complete</span>
+          <span className="badge badge-blue">{completedCount}/{roadmap.length} phases</span>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:0}}>
+          {roadmap.map((phase,idx)=>{
+            const status=idx<completedCount?"done":idx===completedCount?"active":"locked";
+            const isExpanded=expanded===idx;
+            return(
+              <div key={idx} style={{display:"flex",gap:24,marginBottom:8}}>
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}>
+                  <div style={{width:36,height:36,borderRadius:"50%",background:status==="done"?"var(--green)":status==="active"?"var(--grad)":"var(--bg4)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.8rem",fontWeight:700,color:"#fff",flexShrink:0,zIndex:1}}>
+                    {status==="done"?"✓":idx+1}
+                  </div>
+                  {idx<roadmap.length-1&&<div style={{width:2,flex:1,background:"var(--border)",minHeight:16}}/>}
+                </div>
+                <div style={{flex:1,paddingBottom:20}}>
+                  <div className="card" style={{borderColor:status==="active"?"var(--blue)":status==="done"?"var(--green)40":"var(--border)",cursor:"pointer"}} onClick={()=>setExpanded(isExpanded?-1:idx)}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                      <div>
+                        <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:4}}>
+                          <span className="h4">{phase.title}</span>
+                          <span className={`badge ${status==="done"?"badge-green":status==="active"?"badge-blue":"badge-amber"}`}>{status==="done"?"Completed":status==="active"?"In Progress":"Upcoming"}</span>
+                        </div>
+                        <span className="small">{phase.weeks}</span>
+                      </div>
+                      <span style={{color:"var(--text3)",fontSize:"1.2rem"}}>{isExpanded?"▲":"▼"}</span>
+                    </div>
+                    {isExpanded&&(
+                      <div className="fade-in" style={{marginTop:20,borderTop:"0.5px solid var(--border)",paddingTop:20}}>
+                        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+                          <div><div className="small" style={{marginBottom:8}}>📚 Topics</div>{phase.topics.map(t=><div key={t} className="badge badge-cyan" style={{marginRight:4,marginBottom:4}}>{t}</div>)}</div>
+                          <div><div className="small" style={{marginBottom:8}}>✅ Tasks</div>{phase.tasks.map(t=><div key={t} style={{fontSize:"0.8rem",color:"var(--text2)",marginBottom:4}}>• {t}</div>)}</div>
+                        </div>
+                        <div style={{background:"var(--bg3)",borderRadius:12,padding:16,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                          <div><div className="small" style={{marginBottom:4}}>🚀 Capstone Project</div><div className="h4">{phase.project}</div></div>
+                          {status!=="done"&&status==="active"&&<button className="btn btn-success btn-sm" onClick={()=>markDone(idx)}>Mark Done ✓</button>}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ========== RESOURCES ==========
+function ResourcesPage({user}){
+  const [level,setLevel]=useState("beginner");
+  const resources=getResources(user.domain);
+  const current=resources[level]||[];
+  const icons={course:"📚",video:"🎬",article:"📰"};
+
+  return(
+    <div style={{padding:"32px 0"}} className="fade-in">
+      <div className="container">
+        <div style={{marginBottom:24}}>
+          <h1 className="h2">Learning Resources 📚</h1>
+          <p className="body">Curated materials for {user.domainData.name}</p>
+        </div>
+        <div className="tab-bar" style={{marginBottom:24,display:"inline-flex"}}>
+          {["beginner","intermediate","advanced"].map(l=>(
+            <button key={l} className={`tab ${level===l?"active":""}`} onClick={()=>setLevel(l)} style={{textTransform:"capitalize"}}>{l}</button>
+          ))}
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:20}}>
+          {current.map((r,i)=>(
+            <div className="card fade-in" key={i}>
+              <div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+                <div style={{fontSize:"1.6rem"}}>{icons[r.type]}</div>
+                <div>
+                  <span className={`badge ${r.type==="course"?"badge-blue":r.type==="video"?"badge-red":"badge-green"}`} style={{marginBottom:8}}>{r.type}</span>
+                  <div className="h4" style={{marginBottom:4}}>{r.t}</div>
+                  <div className="small">{r.p}</div>
+                </div>
+              </div>
+              <button className="btn btn-secondary btn-sm" style={{marginTop:16,width:"100%"}}>Open Resource ↗</button>
+            </div>
+          ))}
+        </div>
+        <div className="card" style={{marginTop:32,background:"linear-gradient(135deg,var(--bg3),var(--bg4))"}}>
+          <h3 className="h3" style={{marginBottom:8}}>💡 Learning Tip</h3>
+          <p className="body">For {user.domainData.name}, start with hands-on projects as early as possible. Theory without practice leads to shallow understanding. Build something every week.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ========== INTERNSHIPS ==========
+function InternshipsPage({user}){
+  const [tab,setTab]=useState("demo");
+  const filtered=tab==="all"?INTERNSHIPS:tab==="demo"?INTERNSHIPS.filter(i=>i.type==="Demo"):INTERNSHIPS.filter(i=>i.domain===user.domain);
+  const unlocked=user.progress>=30;
+
+  return(
+    <div style={{padding:"32px 0"}} className="fade-in">
+      <div className="container">
+        <div style={{marginBottom:24}}>
+          <h1 className="h2">Internships 💼</h1>
+          <p className="body">Demo internships simulate real workflows. Real listings are curated by domain.</p>
+        </div>
+        {!unlocked&&(
+          <div className="card" style={{marginBottom:24,background:"linear-gradient(135deg,var(--amber)10,var(--amber)05)",borderColor:"var(--amber)40"}}>
+            <div style={{display:"flex",gap:12,alignItems:"center"}}>
+              <span style={{fontSize:"1.5rem"}}>🔒</span>
+              <div><div className="h4">Unlock Demo Internships</div><p className="small">Reach 30% roadmap progress to unlock demo internships. You're at {user.progress}%.</p></div>
+            </div>
+            <div className="progress-bar" style={{marginTop:12}}><div className="progress-fill" style={{width:`${user.progress}%`,background:"linear-gradient(135deg,var(--amber),var(--red))"}}/></div>
+          </div>
+        )}
+        <div className="tab-bar" style={{marginBottom:24,display:"inline-flex"}}>
+          {[["demo","Demo Internships"],["mydomain","My Domain"],["all","All Listings"]].map(([v,l])=>(
+            <button key={v} className={`tab ${tab===v?"active":""}`} onClick={()=>setTab(v)}>{l}</button>
+          ))}
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:20}}>
+          {INTERNSHIPS.filter(i=>tab==="all"?true:tab==="demo"?true:i.domain===user.domain).map((intern,i)=>{
+            const d=DOMAINS.find(x=>x.id===intern.domain);
+            const isLocked=tab==="demo"&&!unlocked;
+            return(
+              <div className="card" key={i} style={{opacity:isLocked?0.5:1}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
+                  <div style={{display:"flex",gap:12,alignItems:"center"}}>
+                    <div style={{width:44,height:44,borderRadius:12,background:"var(--grad)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:"1.1rem"}}>{intern.logo}</div>
+                    <div>
+                      <div className="h4">{intern.company}</div>
+                      <div className="small">{intern.role}</div>
+                    </div>
+                  </div>
+                  <span className={`badge ${intern.status==="Open"?"badge-green":"badge-red"}`}>{intern.status}</span>
+                </div>
+                <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:16}}>
+                  <span className="badge badge-blue">{intern.stipend}</span>
+                  <span className="badge badge-purple">{intern.duration}</span>
+                  {d&&<span className="badge badge-cyan">{d.name.split(" ")[0]}</span>}
+                </div>
+                <button className={`btn btn-sm ${intern.status==="Open"&&!isLocked?"btn-primary":"btn-secondary"}`} style={{width:"100%"}} disabled={isLocked||intern.status==="Closed"}>
+                  {isLocked?"🔒 Locked":intern.status==="Open"?"Apply Now →":"Closed"}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ========== RESUME BUILDER ==========
+function ResumePage({user}){
+  const [template,setTemplate]=useState("modern");
+  const [tab,setTab]=useState("personal");
+  const d=user.domainData;
+  const roadmap=getRoadmap(user.domain);
+  const completedPhases=roadmap.filter((_,i)=>i<Math.floor(roadmap.length*(user.progress/100)));
+
+  const [info,setInfo]=useState({
+    name:user.name||"",
+    email:"your@email.com",
+    phone:"+91 98765 43210",
+    location:"Bengaluru, India",
+    linkedin:"linkedin.com/in/"+user.username,
+    github:"github.com/"+user.username,
+    summary:`Passionate ${d.name} enthusiast with hands-on experience building real-world projects. Currently pursuing expertise through structured self-learning, with strong foundations in ${d.skills.slice(0,3).join(", ")}.`,
+  });
+
+  const completeness=Math.round((Object.values(info).filter(v=>v).length/Object.keys(info).length)*60+(user.progress/100)*40);
+
+  const suggestions=[];
+  if(user.progress<50)suggestions.push({type:"warn",text:"Add more completed projects to strengthen your profile"});
+  if(!info.github)suggestions.push({type:"error",text:"Add your GitHub profile link"});
+  if(user.progress>40)suggestions.push({type:"success",text:"Your skills section is strong! Keep growing."});
+  suggestions.push({type:"info",text:'Include measurable outcomes (e.g., "Achieved 95% model accuracy")'});
+
+  const upd=(k,v)=>setInfo(p=>({...p,[k]:v}));
+
+  return(
+    <div style={{padding:"32px 0"}} className="fade-in">
+      <div className="container">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:24,flexWrap:"wrap",gap:12}}>
+          <div><h1 className="h2">Resume Builder 📄</h1><p className="body">ATS-optimized, auto-populated from your journey</p></div>
+          <div style={{display:"flex",gap:10}}>
+            <div className="tab-bar">
+              {["modern","minimal","professional"].map(t=>(
+                <button key={t} className={`tab ${template===t?"active":""}`} onClick={()=>setTemplate(t)} style={{textTransform:"capitalize"}}>{t}</button>
+              ))}
+            </div>
+            <button className="btn btn-primary btn-sm" onClick={()=>window.print()}>⬇ Download PDF</button>
+          </div>
+        </div>
+
+        {/* Score Bar */}
+        <div className="card" style={{marginBottom:24,background:"linear-gradient(135deg,var(--bg3),var(--bg4))"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+            <span className="h4">Resume Score</span>
+            <span style={{fontSize:"1.5rem",fontWeight:800,color:completeness>70?"var(--green)":completeness>40?"var(--amber)":"var(--red)"}}>{completeness}/100</span>
+          </div>
+          <div className="progress-bar" style={{height:10,marginBottom:16}}><div className="progress-fill" style={{width:`${completeness}%`,background:completeness>70?"linear-gradient(135deg,var(--green),var(--cyan))":completeness>40?"linear-gradient(135deg,var(--amber),var(--green))":"linear-gradient(135deg,var(--red),var(--amber))"}}/></div>
+          <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+            {suggestions.map((s,i)=>(
+              <span key={i} className={`badge ${s.type==="warn"?"badge-amber":s.type==="error"?"badge-red":s.type==="success"?"badge-green":"badge-blue"}`}>{s.type==="warn"?"⚠️":s.type==="error"?"❌":s.type==="success"?"✅":"💡"} {s.text}</span>
+            ))}
+          </div>
+        </div>
+
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24}}>
+          {/* Editor */}
+          <div>
+            <div className="tab-bar" style={{marginBottom:16,flexWrap:"wrap"}}>
+              {[["personal","👤"],["summary","📝"],["skills","🛠️"],["projects","🚀"],["certifications","🏆"],["experience","💼"]].map(([v,icon])=>(
+                <button key={v} className={`tab ${tab===v?"active":""}`} onClick={()=>setTab(v)} style={{textTransform:"capitalize"}}>{icon} {v}</button>
+              ))}
+            </div>
+
+            {tab==="personal"&&(
+              <div className="fade-in" style={{display:"flex",flexDirection:"column",gap:12}}>
+                {[["name","Full Name"],["email","Email"],["phone","Phone"],["location","Location"],["linkedin","LinkedIn"],["github","GitHub"]].map(([k,l])=>(
+                  <div key={k}><label className="label">{l}</label><input className="input" value={info[k]} onChange={e=>upd(k,e.target.value)}/></div>
+                ))}
+              </div>
+            )}
+            {tab==="summary"&&(
+              <div className="fade-in">
+                <label className="label">Professional Summary (auto-generated)</label>
+                <textarea className="input" rows={5} value={info.summary} onChange={e=>upd("summary",e.target.value)} style={{resize:"vertical"}}/>
+                <button className="btn btn-secondary btn-sm" style={{marginTop:8}} onClick={()=>upd("summary",`Results-driven ${d.name} professional with expertise in ${d.skills.slice(0,3).join(", ")}. Track record of delivering impactful projects including ${completedPhases[0]?.project||"hands-on applications"}. Eager to contribute to innovative teams.`)}>
+                  🔄 Regenerate Summary
+                </button>
+              </div>
+            )}
+            {tab==="skills"&&(
+              <div className="fade-in">
+                <div className="card card-sm" style={{marginBottom:12}}><div className="small" style={{marginBottom:8}}>🛠️ Technical Skills (from roadmap)</div><div>{d.skills.map(s=><span key={s} className="badge badge-blue" style={{marginRight:4,marginBottom:4}}>{s}</span>)}</div></div>
+                <div className="card card-sm"><div className="small" style={{marginBottom:8}}>🔧 Tools & Platforms</div><div>{["Git","VS Code","Jupyter","Docker","Linux","Postman"].map(s=><span key={s} className="badge badge-purple" style={{marginRight:4,marginBottom:4}}>{s}</span>)}</div></div>
+              </div>
+            )}
+            {tab==="projects"&&(
+              <div className="fade-in" style={{display:"flex",flexDirection:"column",gap:12}}>
+                {completedPhases.map((p,i)=>(
+                  <div key={i} className="card card-sm">
+                    <div className="h4">{p.project}</div>
+                    <p className="small" style={{margin:"4px 0"}}>{p.title} — {p.weeks}</p>
+                    <div>{p.topics.slice(0,3).map(t=><span key={t} className="badge badge-cyan" style={{marginRight:4,marginBottom:2}}>{t}</span>)}</div>
+                  </div>
+                ))}
+                {completedPhases.length===0&&<div className="small" style={{textAlign:"center",padding:24}}>Complete roadmap phases to auto-populate projects</div>}
+              </div>
+            )}
+            {tab==="certifications"&&(
+              <div className="fade-in" style={{display:"flex",flexDirection:"column",gap:12}}>
+                {[{title:`${d.name} Fundamentals`,issuer:"DomaneX Platform",date:"2024",status:"Earned"},{title:"Python Programming",issuer:"Coursera",date:"2024",status:"Earned"}].map((c,i)=>(
+                  <div key={i} className="card card-sm" style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <div><div className="h4">{c.title}</div><div className="small">{c.issuer} · {c.date}</div></div>
+                    <span className="badge badge-green">{c.status}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {tab==="experience"&&(
+              <div className="fade-in">
+                <div className="card card-sm">
+                  <div className="h4">Demo Internship — {user.domainData.name}</div>
+                  <div className="small" style={{marginBottom:8}}>DomaneX Platform · Jan 2025 – Mar 2025</div>
+                  <p style={{fontSize:"0.85rem",color:"var(--text2)"}}>Completed simulated internship tasks including project development, code review, and presentation. Demonstrated real-world {d.name} workflow understanding.</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Preview */}
+          <div>
+            <div style={{background:template==="minimal"?"#fff":template==="professional"?"#f8f9fa":"#fff",color:"#1a1a2e",borderRadius:16,padding:32,border:"1px solid #e0e0e0",fontSize:"0.82rem",lineHeight:1.6,minHeight:600}}>
+              <div style={{borderBottom:"2px solid "+(template==="modern"?"#4f8ef7":template==="professional"?"#1a1a2e":"#ccc"),paddingBottom:16,marginBottom:16}}>
+                <div style={{fontSize:"1.5rem",fontWeight:800,color:"#1a1a2e"}}>{info.name||"Your Name"}</div>
+                <div style={{fontSize:"0.9rem",color:"#4f8ef7",fontWeight:600,marginBottom:6}}>{d.name} Professional</div>
+                <div style={{color:"#666",fontSize:"0.78rem"}}>{info.email} · {info.phone} · {info.location}</div>
+                <div style={{color:"#4f8ef7",fontSize:"0.78rem"}}>{info.linkedin} · {info.github}</div>
+              </div>
+              <div style={{marginBottom:14}}>
+                <div style={{fontWeight:700,fontSize:"0.78rem",textTransform:"uppercase",letterSpacing:1,color:"#4f8ef7",marginBottom:6}}>Summary</div>
+                <div style={{color:"#333",fontSize:"0.8rem"}}>{info.summary}</div>
+              </div>
+              <div style={{marginBottom:14}}>
+                <div style={{fontWeight:700,fontSize:"0.78rem",textTransform:"uppercase",letterSpacing:1,color:"#4f8ef7",marginBottom:6}}>Technical Skills</div>
+                <div>{d.skills.join(" · ")}</div>
+              </div>
+              {completedPhases.length>0&&(
+                <div style={{marginBottom:14}}>
+                  <div style={{fontWeight:700,fontSize:"0.78rem",textTransform:"uppercase",letterSpacing:1,color:"#4f8ef7",marginBottom:6}}>Projects</div>
+                  {completedPhases.slice(0,2).map((p,i)=>(
+                    <div key={i} style={{marginBottom:8}}>
+                      <div style={{fontWeight:600}}>{p.project}</div>
+                      <div style={{color:"#666",fontSize:"0.78rem"}}>{p.topics.slice(0,3).join(", ")} · {p.weeks}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div>
+                <div style={{fontWeight:700,fontSize:"0.78rem",textTransform:"uppercase",letterSpacing:1,color:"#4f8ef7",marginBottom:6}}>Certifications</div>
+                <div style={{color:"#333"}}>{d.name} Fundamentals — DomaneX Platform, 2024</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ========== INTERVIEW ==========
+function InterviewPage({user}){
+  const questions=(IQ[user.domain]||IQ.ai);
+  const [current,setCurrent]=useState(0);
+  const [answer,setAnswer]=useState("");
+  const [feedback,setFeedback]=useState(null);
+  const [chatMsg,setChatMsg]=useState("");
+  const [chat,setChat]=useState([{role:"ai",text:`Hi! I'm your AI interview coach. Ask me anything about ${user.domainData.name} interviews, or let's practice some questions together.`}]);
+  const [tab,setTab]=useState("practice");
+
+  const submitAnswer=()=>{
+    if(!answer.trim())return;
+    const score=Math.floor(Math.random()*30)+60;
+    setFeedback({score,tips:["Be more specific with examples","Mention relevant technologies","Structure your answer with STAR method"]});
+  };
+
+  const sendChat=()=>{
+    if(!chatMsg.trim())return;
+    const msg=chatMsg;setChatMsg("");
+    setChat(c=>[...c,{role:"user",text:msg}]);
+    setTimeout(()=>{
+      const responses={
+        "nervou":"Take deep breaths before interviews. Practice with mock questions daily. Confidence comes from preparation.",
+        "salary":"For entry-level "+user.domainData.name+" roles in India, expect ₹4–8 LPA. Research company-specific ranges on Glassdoor.",
+        "default":"Great question! For "+user.domainData.name+" interviews, focus on fundamentals, be ready to code/explain concepts, and always think out loud during problem solving.",
+      };
+      const key=Object.keys(responses).find(k=>msg.toLowerCase().includes(k))||"default";
+      setChat(c=>[...c,{role:"ai",text:responses[key]}]);
+    },600);
+  };
+
+  return(
+    <div style={{padding:"32px 0"}} className="fade-in">
+      <div className="container">
+        <div style={{marginBottom:24}}><h1 className="h2">Interview Prep 🎤</h1><p className="body">Practice questions, get AI feedback, and build confidence.</p></div>
+        <div className="tab-bar" style={{marginBottom:24,display:"inline-flex"}}>
+          {[["practice","Practice Q&A"],["tips","Soft Skills"],["chatbot","AI Coach"]].map(([v,l])=>(
+            <button key={v} className={`tab ${tab===v?"active":""}`} onClick={()=>setTab(v)}>{l}</button>
+          ))}
+        </div>
+
+        {tab==="practice"&&(
+          <div className="fade-in">
+            <div style={{display:"flex",gap:8,marginBottom:20,flexWrap:"wrap"}}>
+              {questions.map((_,i)=>(
+                <button key={i} className={`badge ${i===current?"badge-blue":"badge-amber"}`} style={{cursor:"pointer"}} onClick={()=>{setCurrent(i);setFeedback(null);setAnswer("");}}>Q{i+1}</button>
+              ))}
+            </div>
+            <div className="card" style={{marginBottom:20}}>
+              <div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+                <span className="badge badge-blue" style={{flexShrink:0}}>Q{current+1}</span>
+                <p style={{fontSize:"1rem",fontWeight:500}}>{questions[current]}</p>
+              </div>
+            </div>
+            <textarea className="input" rows={5} placeholder="Type your answer here..." value={answer} onChange={e=>setAnswer(e.target.value)} style={{marginBottom:12}}/>
+            <div style={{display:"flex",gap:10}}>
+              <button className="btn btn-primary" onClick={submitAnswer} disabled={!answer.trim()}>Get AI Feedback ✨</button>
+              <button className="btn btn-secondary" onClick={()=>{setFeedback(null);setAnswer("");setCurrent((current+1)%questions.length);}}>Next Question →</button>
+            </div>
+            {feedback&&(
+              <div className="card fade-in" style={{marginTop:20,borderColor:"var(--blue)"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+                  <span className="h4">AI Feedback</span>
+                  <span style={{fontSize:"1.5rem",fontWeight:700,color:feedback.score>75?"var(--green)":"var(--amber)"}}>{feedback.score}/100</span>
+                </div>
+                <div className="progress-bar" style={{marginBottom:16}}><div className="progress-fill" style={{width:`${feedback.score}%`}}/></div>
+                <div><div className="small" style={{marginBottom:8}}>💡 Suggestions to improve:</div>
+                {feedback.tips.map((t,i)=><div key={i} style={{fontSize:"0.85rem",color:"var(--text2)",padding:"4px 0"}}>• {t}</div>)}</div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {tab==="tips"&&(
+          <div className="fade-in" style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:20}}>
+            {[["🤝","Communication","Speak clearly, use the STAR method (Situation, Task, Action, Result). Practice in front of a mirror."],["🧠","Problem Solving","Think out loud. Break problems into smaller parts. Ask clarifying questions before jumping to solutions."],["💼","Professionalism","Research the company beforehand. Dress appropriately. Follow up with a thank-you email."],["🔍","Technical Depth","Don't just know the 'what' — explain the 'why'. Interviewers value understanding over memorization."],["⏱️","Time Management","Solve the easy questions first. Manage time in coding rounds. Don't spend too long on one question."],["🌟","Confidence","Believe in your preparation. It's OK to say 'I don't know, but I'd approach it like this...'"]].map(([icon,title,desc])=>(
+              <div className="card" key={title}>
+                <div style={{fontSize:"2rem",marginBottom:12}}>{icon}</div>
+                <div className="h4" style={{marginBottom:8}}>{title}</div>
+                <p className="body" style={{fontSize:"0.87rem"}}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {tab==="chatbot"&&(
+          <div className="fade-in">
+            <div style={{background:"var(--card)",border:"0.5px solid var(--border)",borderRadius:16,height:400,overflowY:"auto",padding:20,marginBottom:16,display:"flex",flexDirection:"column",gap:12}}>
+              {chat.map((m,i)=>(
+                <div key={i} style={{display:"flex",justifyContent:m.role==="user"?"flex-end":"flex-start"}}>
+                  <div style={{maxWidth:"75%",background:m.role==="user"?"var(--grad)":"var(--bg3)",borderRadius:m.role==="user"?"16px 16px 4px 16px":"16px 16px 16px 4px",padding:"12px 16px",fontSize:"0.87rem",color:m.role==="user"?"#fff":"var(--text)"}}>
+                    {m.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{display:"flex",gap:10}}>
+              <input className="input" value={chatMsg} onChange={e=>setChatMsg(e.target.value)} placeholder="Ask anything about interviews..." onKeyDown={e=>e.key==="Enter"&&sendChat()} style={{flex:1}}/>
+              <button className="btn btn-primary" onClick={sendChat}>Send →</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ========== COMMUNITY ==========
+function CommunityPage({user}){
+  const [posts,setPosts]=useState(COMMUNITY);
+  const [newPost,setNewPost]=useState("");
+  const [liked,setLiked]=useState([]);
+
+  const addPost=()=>{
+    if(!newPost.trim())return;
+    setPosts(p=>[{user:user.username||user.name,domain:user.domainData.name,time:"Just now",content:newPost,likes:0,replies:0,avatar:(user.name||"U")[0]},...p]);
+    setNewPost("");
+  };
+
+  return(
+    <div style={{padding:"32px 0"}} className="fade-in">
+      <div className="container">
+        <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:24}}>
+          <div>
+            <div style={{marginBottom:24}}><h1 className="h2">Community 👥</h1><p className="body">Connect with learners in your domain.</p></div>
+            <div className="card" style={{marginBottom:20}}>
+              <textarea className="input" rows={3} placeholder="Share your progress, ask a question, or start a discussion..." value={newPost} onChange={e=>setNewPost(e.target.value)} style={{marginBottom:12}}/>
+              <div style={{display:"flex",justifyContent:"flex-end"}}><button className="btn btn-primary btn-sm" onClick={addPost} disabled={!newPost.trim()}>Post →</button></div>
+            </div>
+            {posts.map((p,i)=>(
+              <div className="card fade-in" key={i} style={{marginBottom:16}}>
+                <div style={{display:"flex",gap:12,alignItems:"flex-start",marginBottom:12}}>
+                  <div style={{width:36,height:36,borderRadius:"50%",background:"var(--grad)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,flexShrink:0}}>{p.avatar||p.user[0]}</div>
+                  <div>
+                    <div style={{display:"flex",gap:8,alignItems:"center"}}><span className="h4">{p.user}</span><span className="badge badge-blue">{p.domain}</span></div>
+                    <span className="small">{p.time}</span>
+                  </div>
+                </div>
+                <p style={{fontSize:"0.9rem",color:"var(--text2)",marginBottom:12}}>{p.content}</p>
+                <div style={{display:"flex",gap:16}}>
+                  <button className={`btn btn-ghost btn-sm ${liked.includes(i)?"":""}` } style={{color:liked.includes(i)?"var(--red)":"var(--text2)"}} onClick={()=>setLiked(l=>l.includes(i)?l.filter(x=>x!==i):[...l,i])}>♥ {p.likes+(liked.includes(i)?1:0)}</button>
+                  <button className="btn btn-ghost btn-sm">💬 {p.replies} replies</button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div>
+            <div className="card" style={{marginBottom:20}}>
+              <h3 className="h3" style={{marginBottom:16}}>Domain Groups</h3>
+              {DOMAINS.map(d=>(
+                <div key={d.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:"0.5px solid var(--border)"}}>
+                  <div style={{display:"flex",gap:8,alignItems:"center"}}><span>{d.icon}</span><span style={{fontSize:"0.87rem"}}>{d.name.split(" ")[0]}</span></div>
+                  <button className={`btn btn-sm ${d.id===user.domain?"btn-success":"btn-secondary"}`}>{d.id===user.domain?"Joined":"Join"}</button>
+                </div>
+              ))}
+            </div>
+            <div className="card">
+              <h3 className="h3" style={{marginBottom:12}}>Top Contributors</h3>
+              {[["DevR","Software Dev",156],["MayaT","Cybersecurity",112],["AlexK","AI",98],["SnehaP","Data Science",87]].map(([n,d,pts])=>(
+                <div key={n} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:"0.5px solid var(--border)"}}>
+                  <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                    <div style={{width:28,height:28,borderRadius:"50%",background:"var(--grad)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.75rem",fontWeight:700}}>{n[0]}</div>
+                    <div><div style={{fontSize:"0.87rem",fontWeight:500}}>{n}</div><div className="small">{d}</div></div>
+                  </div>
+                  <span className="badge badge-amber">{pts} pts</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ========== EVENTS ==========
+function EventsPage({user}){
+  const [filter,setFilter]=useState("all");
+  const filtered=filter==="all"?EVENTS:EVENTS.filter(e=>e.domain===user.domain||e.domain==="all");
+  const typeColors={Hackathon:"badge-red",Workshop:"badge-blue",Meetup:"badge-green"};
+
+  return(
+    <div style={{padding:"32px 0"}} className="fade-in">
+      <div className="container">
+        <div style={{marginBottom:24}}><h1 className="h2">Events 🌍</h1><p className="body">Hackathons, workshops, and meetups for your domain.</p></div>
+        <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
+          {[["all","All Events"],["my","My Domain"]].map(([v,l])=>(
+            <button key={v} className={`btn btn-sm ${filter===v?"btn-primary":"btn-secondary"}`} onClick={()=>setFilter(v)}>{l}</button>
+          ))}
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:20}}>
+          {filtered.map((e,i)=>(
+            <div className="card" key={i}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
+                <span className={`badge ${typeColors[e.type]||"badge-purple"}`}>{e.type}</span>
+                <span className="small">{e.date}</span>
+              </div>
+              <div className="h3" style={{marginBottom:8}}>{e.name}</div>
+              <div style={{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}}>
+                <span className="badge badge-purple">📍 {e.loc}</span>
+                <span className="badge badge-amber">🏆 {e.prize}</span>
+              </div>
+              <button className="btn btn-primary btn-sm" style={{width:"100%"}}>Register →</button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ========== PROFILE ==========
+function ProfilePage({user,setUser}){
+  const roadmap=getRoadmap(user.domain);
+  const weeks=Array.from({length:8},(_,i)=>({week:`W${i+1}`,score:Math.floor(Math.random()*40)+30+i*4}));
+  const canvasRef=useRef(null);
+
+  useEffect(()=>{
+    if(!canvasRef.current)return;
+    const ctx=canvasRef.current.getContext("2d");
+    if(window._profileChart)window._profileChart.destroy();
+    window._profileChart=new Chart(ctx,{
+      type:"line",
+      data:{labels:weeks.map(w=>w.week),datasets:[{label:"Progress %",data:weeks.map(w=>w.score),borderColor:"#4f8ef7",backgroundColor:"#4f8ef720",tension:0.4,fill:true,pointBackgroundColor:"#4f8ef7",pointRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,grid:{color:"#ffffff10"},ticks:{color:"#8896b3"}},x:{grid:{color:"#ffffff10"},ticks:{color:"#8896b3"}}}}
+    });
+  },[]);
+
+  const badges=[
+    {icon:"🚀",name:"First Step",desc:"Started your journey",earned:true},
+    {icon:"📚",name:"Bookworm",desc:"Completed 5 resources",earned:user.progress>20},
+    {icon:"🔥",name:"On Fire",desc:"7-day streak",earned:user.weeklyStreak>0},
+    {icon:"💡",name:"Problem Solver",desc:"Completed 10 tasks",earned:user.progress>40},
+    {icon:"🏆",name:"Phase Master",desc:"Completed a phase",earned:user.progress>16},
+    {icon:"🌟",name:"Rising Star",desc:"50% journey complete",earned:user.progress>=50},
+  ];
+
+  return(
+    <div style={{padding:"32px 0"}} className="fade-in">
+      <div className="container">
+        <div style={{display:"grid",gridTemplateColumns:"1fr 2fr",gap:24}}>
+          <div>
+            <div className="card" style={{textAlign:"center",marginBottom:20}}>
+              <div style={{width:80,height:80,borderRadius:"50%",background:"var(--grad)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"2rem",fontWeight:700,margin:"0 auto 16px"}}>{user.name[0]}</div>
+              <div className="h2">{user.name}</div>
+              <div className="small" style={{marginBottom:12}}>@{user.username}</div>
+              <span className="badge badge-blue" style={{marginBottom:12}}>{user.domainData.name}</span>
+              <div style={{display:"flex",justifyContent:"space-around",marginTop:16}}>
+                <div><div style={{fontWeight:700,color:"var(--blue)"}}>{user.progress}%</div><div className="small">Progress</div></div>
+                <div><div style={{fontWeight:700,color:"var(--green)"}}>{Math.floor(roadmap.length*(user.progress/100))}</div><div className="small">Phases</div></div>
+                <div><div style={{fontWeight:700,color:"var(--amber)"}}>{user.weeklyStreak||0}</div><div className="small">Streak</div></div>
+              </div>
+            </div>
+            <div className="card">
+              <h3 className="h3" style={{marginBottom:16}}>Goal</h3>
+              <div className="card card-sm" style={{background:"var(--bg3)"}}>
+                <div style={{fontSize:"1.5rem",marginBottom:6}}>{user.goal==="job"?"💼":user.goal==="startup"?"🚀":user.goal==="freelance"?"💻":"🔬"}</div>
+                <div className="h4" style={{textTransform:"capitalize"}}>{user.goal}</div>
+                <p className="small">in {user.domainData.name}</p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="card" style={{marginBottom:20}}>
+              <h3 className="h3" style={{marginBottom:16}}>📈 Progress Chart</h3>
+              <div style={{height:200}}><canvas ref={canvasRef}/></div>
+            </div>
+            <div className="card">
+              <h3 className="h3" style={{marginBottom:16}}>🏆 Achievements</h3>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
+                {badges.map((b,i)=>(
+                  <div key={i} className="card card-sm" style={{textAlign:"center",opacity:b.earned?1:0.4,borderColor:b.earned?"var(--amber)40":"var(--border)"}}>
+                    <div style={{fontSize:"1.8rem",marginBottom:4}}>{b.icon}</div>
+                    <div style={{fontSize:"0.78rem",fontWeight:600}}>{b.name}</div>
+                    <div style={{fontSize:"0.7rem",color:"var(--text3)"}}>{b.desc}</div>
+                    {b.earned&&<div className="badge badge-amber" style={{marginTop:4,fontSize:"0.65rem"}}>Earned</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ========== MAIN APP ==========
+function App(){
+  const [user,setUser]=useState(()=>storage.get("user"));
+  const [page,setPage]=useState("dashboard");
+  const [toast,setToast]=useState(null);
+
+  const showToast=(msg)=>{setToast(msg);setTimeout(()=>setToast(null),3200)};
+
+  const handleComplete=(userData)=>{
+    storage.set("user",userData);
+    setUser(userData);
+    showToast("Welcome to DomaneX! Your roadmap is ready 🚀");
+  };
+
+  const handleReset=()=>{
+    if(confirm("Switch domain? Your current progress will be saved.")){
+      storage.clear();setUser(null);setPage("dashboard");
+    }
+  };
+
+  const handleSetUser=(u)=>{setUser(u);storage.set("user",u)};
+
+  if(!user) return(
+    <div>
+      {page!=="onboard"&&<Landing onStart={()=>setPage("onboard")}/>}
+      {page==="onboard"&&<Onboarding onComplete={handleComplete}/>}
+      {toast&&<Toast msg={toast} onClose={()=>setToast(null)}/>}
+    </div>
+  );
+
+  const pages={
+    dashboard:<Dashboard user={user} setUser={handleSetUser} setPage={setPage}/>,
+    roadmap:<RoadmapPage user={user} setUser={handleSetUser}/>,
+    resources:<ResourcesPage user={user}/>,
+    internships:<InternshipsPage user={user}/>,
+    resume:<ResumePage user={user}/>,
+    interview:<InterviewPage user={user}/>,
+    community:<CommunityPage user={user}/>,
+    events:<EventsPage user={user}/>,
+    profile:<ProfilePage user={user} setUser={handleSetUser}/>,
+  };
+
+  return(
+    <div>
+      <Nav page={page} setPage={setPage} user={user} onReset={handleReset}/>
+      {pages[page]||pages.dashboard}
+      {toast&&<Toast msg={toast} onClose={()=>setToast(null)}/>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
