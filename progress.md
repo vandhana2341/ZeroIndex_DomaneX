@@ -9,10 +9,28 @@
 
 ### IN_PROGRESS
 - Features addition: progress tracking, internships and resume building
-- Addition of Customisable roadmaps: schedules and timelines
+- Addition of Customisable roadmaps
 - Analysis dashboard: weekly tracking, Roadmap progress
 
 ### NEXT STEPS
 - Addition of Demo internships: build projects, reports
 - Addition of virtual internships + Analysis + Results
 - Addition of profile and features
+
+
+
+# HOUR 3-6
+### COMPLETED
+- Front-end prototype and partial logic integration
+- Core flow visible
+
+### IN_PROGRESS
+- Core logic fixing
+- Data flow and state management
+- Feature completion
+
+### NEXT STEPS
+- Fix core flow
+- Integration of AI
+- Complete working of main features
+
