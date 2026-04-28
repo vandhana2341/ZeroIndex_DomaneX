@@ -8,15 +8,13 @@
 - Prepared base for progress tracking
 
 ### IN_PROGRESS
-- Features addition: progress tracking, internships and resume building
+- Features addition: progress tracking and resume building
 - Addition of Customisable roadmaps
 - Analysis dashboard: weekly tracking, Roadmap progress
 
 ### NEXT STEPS
-- Addition of Demo internships: build projects, reports
-- Addition of virtual internships + Analysis + Results
+- Addition of virtual internships opportunities + Analysis + Results
 - Addition of profile and features
-
 
 
 # HOUR 3-6
@@ -34,3 +32,20 @@
 - Integration of AI
 - Complete working of main features
 
+
+# HOUR 7-10
+### COMPLETED
+- Website foundation
+- Debugging
+- UI/UX
+- Features addition : Core, Advanced
+- Backend Structure
+
+### IN_PROGRESS
+- Integration of AI
+- Refinement of the final code
+- Polish for demo
+
+### NEXT STEPS
+- Testing
+- Presentation
