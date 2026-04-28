@@ -4,7 +4,7 @@
 - Finalised project idea
 
 ### IN_PROGRESS
-- x
+- 
 
 ### NEXT STEPS
-- y
+- 
