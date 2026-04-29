@@ -62,3 +62,9 @@
 - Debugging
 - Refining and fine tuning
 - PPT
+
+#HOUR 12-19
+### COMMPLETED
+- Refining and fine tuning
+- PPT
+- Debugging
