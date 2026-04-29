@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>DomaneX – Find Your Tech Path. Build Your Future.</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.8.0/Recharts.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#050508;--bg2:#0a0a12;
+  --cyan:#06b6d4;--blue:#3b82f6;--purple:#8b5cf6;
+  --text:#f1f5f9;--text2:#94a3b8;
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+.font-syne{font-family:'Syne',sans-serif;}
+.font-mono{font-family:'JetBrains Mono',monospace;}
+.neon-text{background:linear-gradient(135deg,#06b6d4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.glass{background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;}
+.glass-hover:hover{background:rgba(255,255,255,0.07);border-color:rgba(6,182,212,0.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(6,182,212,0.15);transition:all .3s;}
+.btn-primary{background:linear-gradient(135deg,#06b6d4,#8b5cf6);border:none;color:#fff;padding:12px 28px;border-radius:12px;font-family:'Syne',sans-serif;font-weight:600;font-size:15px;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:8px;justify-content:center;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(6,182,212,0.4);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:var(--text2);padding:10px 24px;border-radius:12px;font-family:'Syne',sans-serif;font-weight:600;font-size:14px;cursor:pointer;transition:all .3s;}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(6,182,212,0.05);}
+.input-field{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;width:100%;outline:none;transition:border-color .2s;}
+.input-field:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(6,182,212,0.1);}
+.input-field::placeholder{color:var(--text2);}
+select.input-field option{background:#0a0a12;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.progress-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#06b6d4,#8b5cf6);border-radius:10px;transition:width 1s ease;}
+.sidebar-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;cursor:pointer;transition:all .2s;color:var(--text2);font-size:14px;font-weight:500;border-left:2px solid transparent;}
+.sidebar-item:hover,.sidebar-item.active{background:rgba(6,182,212,0.1);color:var(--cyan);border-left-color:var(--cyan);}
+.chat-bubble-user{background:linear-gradient(135deg,#06b6d4,#3b82f6);color:#fff;padding:10px 16px;border-radius:16px 16px 4px 16px;max-width:80%;font-size:14px;line-height:1.6;word-wrap:break-word;}
+.chat-bubble-ai{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--text);padding:10px 16px;border-radius:16px 16px 16px 4px;max-width:80%;font-size:14px;line-height:1.6;word-wrap:break-word;}
+.kanban-col{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:14px;min-width:200px;min-height:350px;}
+.kanban-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;margin-bottom:10px;cursor:grab;transition:all .2s;}
+.kanban-card:hover{border-color:rgba(6,182,212,0.4);background:rgba(6,182,212,0.05);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;}
+.modal-box{background:#0a0a14;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px;max-width:560px;width:100%;position:relative;max-height:90vh;overflow-y:auto;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(6,182,212,0.3);border-radius:10px;}
+.typing-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--cyan);margin:0 2px;animation:bounce 1.2s infinite;}
+.typing-dot:nth-child(2){animation-delay:.2s;}
+.typing-dot:nth-child(3){animation-delay:.4s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-8px);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(6,182,212,0.2);}50%{box-shadow:0 0 40px rgba(6,182,212,0.5);}}
+.animate-fadeup{animation:fadeUp .4s ease forwards;}
+.spinner{animation:spin 1s linear infinite;display:inline-block;}
+.page{display:none;}
+.page.active{display:block;}
+/* Layout */
+#app-shell{display:flex;min-height:100vh;}
+#sidebar{width:240px;background:rgba(255,255,255,0.02);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;flex-shrink:0;transition:width .3s ease;overflow:hidden;position:fixed;top:0;bottom:0;left:0;z-index:100;}
+#sidebar.collapsed{width:62px;}
+#main-area{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left .3s;}
+#sidebar.collapsed ~ #main-area, body.sidebar-collapsed #main-area{margin-left:62px;}
+#topbar{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:flex-end;align-items:center;gap:12px;background:rgba(255,255,255,0.02);flex-shrink:0;}
+#page-content{flex:1;overflow-y:auto;}
+/* Landing nav fix */
+.landing-nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;border-bottom:1px solid rgba(255,255,255,0.05);}
+/* Mobile */
+@media(max-width:768px){
+  #sidebar{width:0;transform:translateX(-100%);}
+  #sidebar.mobile-open{width:240px;transform:translateX(0);}
+  #main-area{margin-left:0 !important;}
+  .landing-nav{padding:14px 18px;}
+  .hero-title{font-size:clamp(30px,8vw,58px) !important;}
+  .hero-btns{flex-direction:column;align-items:stretch;}
+  .features-grid{grid-template-columns:1fr !important;}
+  .stats-grid{flex-direction:column;gap:20px !important;}
+  .two-col{grid-template-columns:1fr !important;}
+  .three-col{grid-template-columns:1fr !important;}
+  .quiz-options{gap:10px;}
+  .kanban-board{overflow-x:auto;}
+  .podium{gap:8px !important;}
+  .podium-item{width:70px !important;}
+  #mobile-toggle{display:flex !important;}
+  .hide-mobile{display:none !important;}
+  .sidebar-logo-text{display:none;}
+  #sidebar.mobile-open .sidebar-logo-text{display:block;}
+  #sidebar.mobile-open .sidebar-label{display:inline !important;}
+}
+#mobile-toggle{display:none;background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:4px;}
+.sidebar-label{}
+</style>
+</head>
+<body>
+
+<!-- ============================== LANDING PAGE ============================== -->
+<div id="landing-page">
+  <nav class="landing-nav">
+    <div class="font-syne" style="font-size:22px;font-weight:800;cursor:pointer;" onclick="showPage('landing')">
+      <span class="neon-text">Domane</span><span>X</span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn-primary" onclick="showPage('signup')" style="padding:9px 22px;font-size:14px;">Get Started</button>
+    </div>
+  </nav>
+  <section style="text-align:center;padding:clamp(60px,10vw,120px) 20px 60px;max-width:860px;margin:0 auto;background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,0.07) 0%,transparent 60%);">
+    <div style="margin-bottom:18px;">
+      <span class="badge" style="background:rgba(6,182,212,0.12);color:#06b6d4;border:1px solid rgba(6,182,212,0.3);">✦ AI-Powered Career Platform</span>
+    </div>
+    <h1 class="font-syne hero-title" style="font-size:clamp(36px,7vw,76px);font-weight:800;line-height:1.1;margin-bottom:22px;">
+      Find Your <span class="neon-text">Tech Path.</span><br/>Build Your <span style="color:#8b5cf6;">Future.</span>
+    </h1>
+    <p style="font-size:17px;color:var(--text2);max-width:560px;margin:0 auto 36px;line-height:1.8;">
+      DomaneX uses AI to discover your ideal tech domain, generate personalized roadmaps, simulate real internships, and accelerate your career journey.
+    </p>
+    <div class="hero-btns" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn-primary" onclick="showPage('signup')" style="padding:14px 38px;font-size:16px;">Start Your Journey →</button>
+    </div>
+    <!-- Floating domain pills -->
+    <div id="domain-pills" style="margin-top:52px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;"></div>
+  </section>
+
+  <!-- FEATURES -->
+  <section style="padding:70px 24px;max-width:1100px;margin:0 auto;">
+    <h2 class="font-syne" style="text-align:center;font-size:clamp(24px,4vw,34px);font-weight:700;margin-bottom:48px;">Everything You Need to <span class="neon-text">Succeed</span></h2>
+    <div class="features-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;">
+      <div class="glass glass-hover" style="padding:24px;cursor:pointer;" onclick="showPage('signup')">
+        <div style="font-size:34px;margin-bottom:14px;">🤖</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <h3 class="font-syne" style="font-size:17px;font-weight:700;">AI Domain Discovery</h3>
+          <span class="badge" style="background:rgba(6,182,212,0.12);color:#06b6d4;border:1px solid rgba(6,182,212,0.3);font-size:10px;">AI</span>
+        </div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7;">Advanced AI analyzes your skills and interests to match you with the perfect tech domain.</p>
+      </div>
+      <div class="glass glass-hover" style="padding:24px;cursor:pointer;" onclick="showPage('signup')">
+        <div style="font-size:34px;margin-bottom:14px;">🗺️</div>
+        <h3 class="font-syne" style="font-size:17px;font-weight:700;margin-bottom:10px;">Smart Roadmaps</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7;">AI-generated personalized learning paths with milestones, projects, and certifications.</p>
+      </div>
+      <div class="glass glass-hover" style="padding:24px;cursor:pointer;" onclick="showPage('signup')">
+        <div style="font-size:34px;margin-bottom:14px;">💼</div>
+        <h3 class="font-syne" style="font-size:17px;font-weight:700;margin-bottom:10px;">Internship Simulator</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7;">Real-world project simulation with Kanban boards and readiness scoring.</p>
+      </div>
+      <div class="glass glass-hover" style="padding:24px;cursor:pointer;" onclick="showPage('signup')">
+        <div style="font-size:34px;margin-bottom:14px;">🎤</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <h3 class="font-syne" style="font-size:17px;font-weight:700;">Mock Interviews</h3>
+          <span class="badge" style="background:rgba(6,182,212,0.12);color:#06b6d4;border:1px solid rgba(6,182,212,0.3);font-size:10px;">AI</span>
+        </div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7;">Live AI-powered technical interviews with real-time feedback and scoring.</p>
+      </div>
+      <div class="glass glass-hover" style="padding:24px;cursor:pointer;" onclick="showPage('signup')">
+        <div style="font-size:34px;margin-bottom:14px;">📄</div>
+        <h3 class="font-syne" style="font-size:17px;font-weight:700;margin-bottom:10px;">Resume Builder</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7;">Auto-generate ATS-optimized resumes from your progress and achievements.</p>
+      </div>
+      <div class="glass glass-hover" style="padding:24px;cursor:pointer;" onclick="showPage('signup')">
+        <div style="font-size:34px;margin-bottom:14px;">🤖</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <h3 class="font-syne" style="font-size:17px;font-weight:700;">X-Guide AI Mentor</h3>
+          <span class="badge" style="background:rgba(6,182,212,0.12);color:#06b6d4;border:1px solid rgba(6,182,212,0.3);font-size:10px;">AI</span>
+        </div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7;">24/7 AI mentor that knows your progress, weaknesses, and gives personalized advice.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="border-top:1px solid rgba(255,255,255,0.05);padding:26px 40px;display:flex;justify-content:space-between;align-items:center;color:var(--text2);font-size:13px;flex-wrap:wrap;gap:12px;">
+    <div class="font-syne" style="font-weight:700;"><span class="neon-text">Domane</span>X</div>
+    <div>© 2025 DomaneX. All rights reserved.</div>
+    <div style="display:flex;gap:16px;">
+      <span style="cursor:pointer;" onclick="showPage('pricing')">Pricing</span>
+      <span style="cursor:pointer;">Privacy</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ============================== AUTH PAGES ============================== -->
+<div id="login-page" style="display:none;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,0.08) 0%,transparent 60%),#050508;display:none;align-items:center;justify-content:center;padding:20px;">
+  <div class="glass animate-fadeup" style="width:100%;max-width:440px;padding:40px;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:8px;"><span class="neon-text">Domane</span>X</div>
+      <h1 class="font-syne" style="font-size:22px;font-weight:700;">Welcome back</h1>
+      <p style="color:var(--text2);font-size:14px;margin-top:5px;">Continue your journey</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <label style="font-size:12px;color:var(--text2);margin-bottom:6px;display:block;">Email</label>
+        <input class="input-field" id="login-email" type="email" placeholder="you@example.com"/>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text2);margin-bottom:6px;display:block;">Password</label>
+        <input class="input-field" id="login-pass" type="password" placeholder="••••••••"/>
+      </div>
+    </div>
+    <div id="login-err" style="display:none;color:#ef4444;font-size:13px;margin-top:10px;padding:8px 12px;background:rgba(239,68,68,0.1);border-radius:8px;"></div>
+    <button class="btn-primary" onclick="doLogin()" id="login-btn" style="width:100%;margin-top:22px;padding:14px;">Sign In</button>
+    <p style="text-align:center;font-size:13px;color:var(--text2);margin-top:18px;">Don't have an account? <span style="color:var(--cyan);cursor:pointer;font-weight:600;" onclick="showPage('signup')">Sign up</span></p>
+    <p style="text-align:center;margin-top:10px;"><span style="color:var(--text2);font-size:12px;cursor:pointer;" onclick="showPage('landing')">← Back to home</span></p>
+  </div>
+</div>
+
+<div id="signup-page" style="display:none;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(139,92,246,0.08) 0%,transparent 60%),#050508;align-items:center;justify-content:center;padding:20px;">
+  <div class="glass animate-fadeup" style="width:100%;max-width:440px;padding:40px;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:8px;"><span class="neon-text">Domane</span>X</div>
+      <h1 class="font-syne" style="font-size:22px;font-weight:700;">Create account</h1>
+      <p style="color:var(--text2);font-size:14px;margin-top:5px;">Start your tech career journey</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <label style="font-size:12px;color:var(--text2);margin-bottom:6px;display:block;">Full Name</label>
+        <input class="input-field" id="su-name" placeholder="Aryan Sharma"/>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text2);margin-bottom:6px;display:block;">College</label>
+        <input class="input-field" id="su-college" placeholder="IIT Bombay"/>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text2);margin-bottom:6px;display:block;">Year</label>
+        <select class="input-field" id="su-year">
+          <option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>Graduate</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text2);margin-bottom:6px;display:block;">Email</label>
+        <input class="input-field" id="su-email" type="email" placeholder="you@example.com"/>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text2);margin-bottom:6px;display:block;">Password</label>
+        <input class="input-field" id="su-pass" type="password" placeholder="••••••••"/>
+      </div>
+    </div>
+    <div id="su-err" style="display:none;color:#ef4444;font-size:13px;margin-top:10px;padding:8px 12px;background:rgba(239,68,68,0.1);border-radius:8px;"></div>
+    <button class="btn-primary" onclick="doSignup()" style="width:100%;margin-top:22px;padding:14px;">Create Account</button>
+    <p style="text-align:center;font-size:13px;color:var(--text2);margin-top:18px;">Already have an account? <span style="color:var(--cyan);cursor:pointer;font-weight:600;" onclick="showPage('login')">Sign in</span></p>
+    <p style="text-align:center;margin-top:10px;"><span style="color:var(--text2);font-size:12px;cursor:pointer;" onclick="showPage('landing')">← Back to home</span></p>
+  </div>
+</div>
+
+<!-- ============================== APP SHELL ============================== -->
+<div id="app-shell" style="display:none;">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div style="padding:18px 14px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;">
+      <div class="font-syne sidebar-logo-text" style="font-size:18px;font-weight:800;white-space:nowrap;"><span class="neon-text">Domane</span>X</div>
+      <button onclick="toggleSidebar()" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;flex-shrink:0;">☰</button>
+    </div>
+    <div id="domain-badge-sidebar" style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.06);display:none;"></div>
+    <nav id="sidebar-nav" style="flex:1;padding:10px 8px;overflow-y:auto;"></nav>
+    <div style="padding:10px 8px;border-top:1px solid rgba(255,255,255,0.06);">
+      <div class="sidebar-item" onclick="logout()">
+        <span style="font-size:18px;flex-shrink:0;">🚪</span>
+        <span class="sidebar-label">Logout</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main-area">
+    <div id="topbar">
+      <button id="mobile-toggle" onclick="toggleMobileSidebar()" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:4px;display:none;">☰</button>
+      <div style="display:flex;align-items:center;gap:8px;padding:5px 12px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:20px;">
+        <span id="topbar-streak" style="color:#f59e0b;font-size:13px;">🔥 0 day streak</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div id="topbar-avatar" style="width:32px;height:32px;border-radius:50%;background:rgba(6,182,212,0.2);border:2px solid rgba(6,182,212,0.4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#06b6d4;font-family:'Syne',sans-serif;"></div>
+        <div class="hide-mobile">
+          <div id="topbar-name" style="font-size:13px;font-weight:600;"></div>
+          <div id="topbar-plan" style="font-size:11px;color:var(--text2);"></div>
+        </div>
+      </div>
+    </div>
+    <div id="page-content"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="global-modal" class="modal-overlay" style="display:none;" onclick="closeModal(event)">
+  <div class="modal-box">
+    <button onclick="closeModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);cursor:pointer;font-size:20px;">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ===============================================================
+// STATE
+// ===============================================================
+let user = null;
+let currentPage = 'landing';
+let quizAnswers = [];
+let quizCurrent = 0;
+let quizTimer = null;
+let chatMessages = [];
+let interviewMessages = [];
+let kanbanCols = {
+  todo:[{id:1,title:'Research domain industry trends',priority:'High',xp:50},{id:2,title:'Set up development environment',priority:'Medium',xp:30},{id:3,title:'Review codebase documentation',priority:'Low',xp:20}],
+  inprogress:[{id:4,title:'Build feature module',priority:'High',xp:80}],
+  review:[{id:5,title:'API integration spec',priority:'Medium',xp:60}],
+  done:[{id:6,title:'Onboarding complete',priority:'Low',xp:40}]
+};
+let dragCard=null; let dragFrom=null;
+let savedEvents=[2];
+let communityPosts=[
+  {id:1,author:'Aryan S.',domain:'AI/ML',content:'Just completed my first neural network from scratch! 🔥 Took 3 weeks but totally worth it.',likes:12,comments:3,avatar:'AS'},
+  {id:2,author:'Priya N.',domain:'Web Dev',content:'Deployed my first full-stack app using React + Node. The feeling is unreal! 🚀',likes:8,comments:2,avatar:'PN'},
+];
+let postLikes={};
+
+const DOMAINS=[
+  {id:'ai_ml',name:'AI / ML',icon:'🤖',color:'#06b6d4',desc:'Build intelligent systems, neural networks, and data-driven models'},
+  {id:'web_dev',name:'Web Dev',icon:'🌐',color:'#8b5cf6',desc:'Create full-stack web applications and modern user interfaces'},
+  {id:'cybersecurity',name:'Cybersecurity',icon:'🔐',color:'#ef4444',desc:'Protect systems, networks, and data from digital attacks'},
+  {id:'data_science',name:'Data Science',icon:'📊',color:'#f59e0b',desc:'Extract insights and build predictive models from data'},
+  {id:'app_dev',name:'App Dev',icon:'📱',color:'#10b981',desc:'Build mobile applications for iOS and Android platforms'},
+  {id:'cloud',name:'Cloud',icon:'☁️',color:'#3b82f6',desc:'Design scalable cloud infrastructure and DevOps pipelines'},
+  {id:'ui_ux',name:'UI/UX',icon:'🎨',color:'#ec4899',desc:'Design beautiful, user-centered digital experiences'},
+  {id:'devops',name:'DevOps',icon:'⚙️',color:'#84cc16',desc:'Automate software delivery and infrastructure management'},
+];
+
+const QUIZ_QUESTIONS={
+  ai_ml:[
+    {q:'What is gradient descent?',opts:['Optimization algorithm','Data structure','Programming language','Network protocol'],c:0,d:1},
+    {q:'Which library is used for deep learning in Python?',opts:['NumPy','Pandas','TensorFlow','Matplotlib'],c:2,d:1},
+    {q:'What does CNN stand for?',opts:['Convolutional Neural Network','Cyclic Node Network','Central Neural Node','Coded Network Node'],c:0,d:2},
+    {q:'What is overfitting?',opts:['Model too simple','Model memorizes training data','Low accuracy','Missing data'],c:1,d:2},
+    {q:'Which activation function outputs values between 0 and 1?',opts:['ReLU','Tanh','Sigmoid','Softmax'],c:2,d:3},
+  ],
+  web_dev:[
+    {q:'What does DOM stand for?',opts:['Document Object Model','Data Object Module','Dynamic Output Method','Design Object Map'],c:0,d:1},
+    {q:'Which is used for layout in CSS?',opts:['Float only','Grid and Flexbox','Tables','Margin only'],c:1,d:1},
+    {q:'What is REST API?',opts:['A programming language','Architectural style for networked apps','Database system','Testing framework'],c:1,d:2},
+    {q:'What does HTTP stand for?',opts:['HyperText Transfer Protocol','High Tech Transfer Process','HyperText Transition Page','Home Transfer Protocol'],c:0,d:2},
+    {q:'What does CORS stand for?',opts:['Cross-Origin Resource Sharing','Code Object Runtime System','Central Output Resource','Client Object Request Service'],c:0,d:3},
+  ],
+  default:[
+    {q:'What is an API?',opts:['Application Programming Interface','Automated Program Installer','Advanced Protocol Interface','App Process Integration'],c:0,d:1},
+    {q:'What is version control?',opts:['Software pricing system','Track code changes over time','Internet browser','Database management'],c:1,d:1},
+    {q:'What is agile methodology?',opts:['A programming language','Iterative development approach','Database design pattern','Hardware specification'],c:1,d:2},
+    {q:'What is a database index?',opts:['Table of contents for faster queries','Primary key only','Foreign key constraint','Query language'],c:0,d:2},
+    {q:'What is containerization?',opts:['Data encryption','Package apps with dependencies','Cloud storage','UI framework'],c:1,d:3},
+  ],
+};
+
+const NAV_ITEMS=[
+  {id:'dashboard',label:'Dashboard',icon:'📊'},
+  {id:'domain-discovery',label:'Domain Discovery',icon:'🧭'},
+  {id:'roadmap',label:'Roadmap',icon:'🗺️'},
+  {id:'skill-gap',label:'Skill Gap',icon:'📈'},
+  {id:'tasks',label:'Tasks',icon:'✅'},
+  {id:'internship',label:'Internship Sim',icon:'💼'},
+  {id:'interview',label:'Mock Interview',icon:'🎤'},
+  {id:'progress',label:'Progress',icon:'📉'},
+  {id:'resume',label:'Resume',icon:'📄'},
+  {id:'portfolio',label:'Portfolio',icon:'🌐'},
+  {id:'leaderboard',label:'Leaderboard',icon:'🏆'},
+  {id:'events',label:'Events',icon:'📅'},
+  {id:'community',label:'Community',icon:'🤝'},
+  {id:'ai-guide',label:'X-Guide AI',icon:'🤖'},
+  {id:'pricing',label:'Pricing',icon:'💎'},
+  {id:'profile',label:'Profile',icon:'👤'},
+];
+
+// ===============================================================
+// CLAUDE API
+// ===============================================================
+async function callClaude(messages, system='', maxTokens=1000){
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,system,messages})
+    });
+    const d=await r.json();
+    return d.content?.map(b=>b.text||'').join('')||'';
+  }catch(e){return null;}
+}
+
+// ===============================================================
+// NAVIGATION
+// ===============================================================
+function showPage(name){
+  // Hide all root pages
+  document.getElementById('landing-page').style.display='none';
+  document.getElementById('login-page').style.display='none';
+  document.getElementById('signup-page').style.display='none';
+  document.getElementById('app-shell').style.display='none';
+
+  currentPage=name;
+
+  const publicPages=['landing','login','signup'];
+  if(!publicPages.includes(name)&&!user){showPage('login');return;}
+
+  if(name==='landing'){document.getElementById('landing-page').style.display='block';initLanding();}
+  else if(name==='login'){
+    const el=document.getElementById('login-page');
+    el.style.display='flex';
+  }
+  else if(name==='signup'){
+    const el=document.getElementById('signup-page');
+    el.style.display='flex';
+  }
+  else{
+    document.getElementById('app-shell').style.display='flex';
+    updateTopbar();
+    buildSidebar();
+    renderAppPage(name);
+  }
+}
+
+function renderAppPage(name){
+  const content=document.getElementById('page-content');
+  // Update active nav
+  document.querySelectorAll('.sidebar-item').forEach(el=>{
+    el.classList.toggle('active',el.dataset.page===name);
+  });
+  // Update domain badge
+  updateDomainBadge();
+  // Render
+  switch(name){
+    case 'dashboard': content.innerHTML=renderDashboard(); break;
+    case 'domain-discovery': content.innerHTML=renderDomainDiscovery(); break;
+    case 'quiz': content.innerHTML=renderQuiz(); initQuiz(); break;
+    case 'tasks': content.innerHTML=renderTasks(); break;
+    case 'results': content.innerHTML=renderResults(); break;
+    case 'goal': content.innerHTML=renderGoal(); break;
+    case 'roadmap': content.innerHTML=renderRoadmapPage(); initRoadmap(); break;
+    case 'skill-gap': content.innerHTML=renderSkillGap(); break;
+    case 'internship': content.innerHTML=renderInternship(); break;
+    case 'interview': content.innerHTML=renderInterviewSetup(); break;
+    case 'progress': content.innerHTML=renderProgress(); break;
+    case 'resume': content.innerHTML=renderResumePage(); break;
+    case 'portfolio': content.innerHTML=renderPortfolioPage(); break;
+    case 'leaderboard': content.innerHTML=renderLeaderboard(); break;
+    case 'events': content.innerHTML=renderEvents(); break;
+    case 'community': content.innerHTML=renderCommunity(); break;
+    case 'ai-guide': content.innerHTML=renderAIGuide(); initAIGuide(); break;
+    case 'pricing': content.innerHTML=renderPricing(); break;
+    case 'profile': content.innerHTML=renderProfile(); break;
+    default: content.innerHTML=`<div style="padding:40px;color:var(--text2);">Page not found. <span style="color:var(--cyan);cursor:pointer;" onclick="showPage('dashboard')">Go to Dashboard</span></div>`;
+  }
+}
+
+// ===============================================================
+// AUTH
+// ===============================================================
+function doLogin(){
+  const e=document.getElementById('login-email').value;
+  const p=document.getElementById('login-pass').value;
+  const err=document.getElementById('login-err');
+  if(!e||!p){err.style.display='block';err.textContent='Please fill all fields.';return;}
+  const btn=document.getElementById('login-btn');
+  btn.disabled=true;btn.textContent='Signing in...';
+  setTimeout(()=>{
+    user={id:'u1',email:e,name:e.split('@')[0].replace(/[^a-zA-Z]/g,' ').trim()||'Student',college:'University',year:'2nd Year',plan:'free',xp:0,level:1,streak:0,selectedDomain:null,goal:null,duration:null,quizScore:0,tasksCompleted:0};
+    btn.disabled=false;btn.textContent='Sign In';
+    showPage('domain-discovery');
+  },1000);
+}
+
+function doSignup(){
+  const name=document.getElementById('su-name').value;
+  const college=document.getElementById('su-college').value;
+  const year=document.getElementById('su-year').value;
+  const e=document.getElementById('su-email').value;
+  const p=document.getElementById('su-pass').value;
+  const err=document.getElementById('su-err');
+  if(!e||!p){err.style.display='block';err.textContent='Email and password are required.';return;}
+  setTimeout(()=>{
+    user={id:'u1',email:e,name:name||'Student',college:college||'University',year,plan:'free',xp:0,level:1,streak:0,selectedDomain:null,goal:null,duration:null,quizScore:0,tasksCompleted:0};
+    showPage('domain-discovery');
+  },1000);
+}
+
+function logout(){user=null;showPage('landing');}
+
+// ===============================================================
+// SIDEBAR & TOPBAR
+// ===============================================================
+function buildSidebar(){
+  const nav=document.getElementById('sidebar-nav');
+  nav.innerHTML=NAV_ITEMS.map(i=>`
+    <div class="sidebar-item${currentPage===i.id?' active':''}" data-page="${i.id}" onclick="showPage('${i.id}')">
+      <span style="font-size:18px;flex-shrink:0;">${i.icon}</span>
+      <span class="sidebar-label">${i.label}</span>
+    </div>
+  `).join('');
+}
+
+function updateTopbar(){
+  if(!user)return;
+  document.getElementById('topbar-streak').textContent=`🔥 ${user.streak||0} day streak`;
+  document.getElementById('topbar-name').textContent=user.name;
+  document.getElementById('topbar-plan').textContent=user.plan==='free'?'Free Plan':user.plan==='pro'?'Pro Plan':'Premium Plan';
+  const av=document.getElementById('topbar-avatar');
+  av.textContent=(user.name||'S').slice(0,2).toUpperCase();
+}
+
+function updateDomainBadge(){
+  const el=document.getElementById('domain-badge-sidebar');
+  const d=DOMAINS.find(d=>d.id===user?.selectedDomain);
+  if(d&&!document.getElementById('sidebar').classList.contains('collapsed')){
+    el.style.display='block';
+    el.innerHTML=`<div style="font-size:10px;color:var(--text2);margin-bottom:5px;font-family:'JetBrains Mono';">CURRENT DOMAIN</div>
+    <div style="display:flex;align-items:center;gap:6px;background:${d.color}15;border:1px solid ${d.color}30;border-radius:8px;padding:6px 10px;">
+      <span>${d.icon}</span><span style="font-size:12px;font-weight:600;color:${d.color};">${d.name}</span>
+    </div>`;
+  }else{el.style.display='none';}
+}
+
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  sb.classList.toggle('collapsed');
+  document.querySelectorAll('.sidebar-label').forEach(el=>el.style.display=sb.classList.contains('collapsed')?'none':'inline');
+  document.querySelector('.sidebar-logo-text').style.display=sb.classList.contains('collapsed')?'none':'block';
+  updateDomainBadge();
+}
+
+function toggleMobileSidebar(){
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+
+// ===============================================================
+// LANDING INIT
+// ===============================================================
+let pillInterval=null;
+function initLanding(){
+  const pills=document.getElementById('domain-pills');
+  pills.innerHTML=DOMAINS.map((d,i)=>`<div id="pill-${i}" class="glass" style="padding:7px 14px;transition:all .3s;"><span style="margin-right:5px;">${d.icon}</span><span style="font-size:13px;font-weight:600;color:var(--text2);">${d.name}</span></div>`).join('');
+  let current=0;
+  clearInterval(pillInterval);
+  pillInterval=setInterval(()=>{
+    document.querySelectorAll('[id^="pill-"]').forEach((el,i)=>{
+      const d=DOMAINS[i];
+      if(i===current){el.style.background=`${d.color}20`;el.style.borderColor=d.color;el.querySelector('span:last-child').style.color=d.color;}
+      else{el.style.background='rgba(255,255,255,0.04)';el.style.borderColor='rgba(255,255,255,0.08)';el.querySelector('span:last-child').style.color='var(--text2)';}
+    });
+    current=(current+1)%DOMAINS.length;
+  },1800);
+}
+
+// ===============================================================
+// HELPERS
+// ===============================================================
+function badge(text,color){return `<span class="badge" style="background:${color}20;color:${color};border:1px solid ${color}40;">${text}</span>`;}
+function progressBar(val,max=100){return `<div class="progress-bar"><div class="progress-fill" style="width:${(val/max)*100}%;"></div></div>`;}
+function spinner(){return `<span class="spinner" style="display:inline-block;width:16px;height:16px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;"></span>`;}
+function aiBadge(){return `<span class="badge" style="background:rgba(6,182,212,0.12);color:#06b6d4;border:1px solid rgba(6,182,212,0.3);font-size:10px;">✦ AI</span>`;}
+function domainOf(){return DOMAINS.find(d=>d.id===user?.selectedDomain)||DOMAINS[0];}
+function glassCard(inner,style=''){return `<div class="glass" style="padding:22px;${style}">${inner}</div>`;}
+function openModal(html){document.getElementById('modal-content').innerHTML=html;document.getElementById('global-modal').style.display='flex';}
+function closeModal(e){if(!e||e.target===document.getElementById('global-modal'))document.getElementById('global-modal').style.display='none';}
+
+// ===============================================================
+// DASHBOARD
+// ===============================================================
+function renderDashboard(){
+  const d=domainOf();
+  const progress=user.progress||78;
+  return `
+  <div style="padding:28px 20px;">
+    <h1 class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:6px;">Dashboard <span style="color:${d.color};">${d.icon}</span></h1>
+    <p style="color:var(--text2);font-size:14px;margin-bottom:24px;">Welcome back, ${user.name}! Keep pushing.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:24px;">
+      ${[['📈','78%','Overall Progress','#06b6d4'],['⚡',`${user.streak||0}🔥`,'Day Streak','#f59e0b'],['⭐',user.xp||0,'XP Points','#8b5cf6'],['🏅',`Lv.${user.level||1}`,'Level','#10b981']].map(([ic,val,lbl,col])=>`
+      ${glassCard(`<div style="text-align:center;"><div style="font-size:26px;margin-bottom:5px;">${ic}</div><div class="font-syne" style="font-size:24px;font-weight:800;color:${col};">${val}</div><div style="font-size:11px;color:var(--text2);margin-top:3px;">${lbl}</div></div>`,'padding:18px;')}
+      `).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px;">
+      ${[
+        ['Continue Roadmap','🗺️','roadmap','#06b6d4'],['Internship Sim','💼','internship','#8b5cf6'],
+        ['Skill Gap','📊','skill-gap','#f59e0b'],['Resume Builder','📄','resume','#10b981'],
+        ['Mock Interview','🎤','interview','#ef4444'],['Ask X-Guide','🤖','ai-guide','#3b82f6'],
+      ].map(([lbl,ic,pg,col])=>`
+      <div class="glass glass-hover" style="padding:18px;text-align:center;cursor:pointer;" onclick="showPage('${pg}')">
+        <div style="font-size:30px;margin-bottom:7px;">${ic}</div>
+        <div style="font-size:13px;font-weight:600;color:${col};">${lbl}</div>
+      </div>`).join('')}
+    </div>
+    ${glassCard(`
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 class="font-syne" style="font-weight:700;">Overall Progress</h3>
+        <span class="font-mono" style="color:#06b6d4;font-size:18px;font-weight:700;">${progress}%</span>
+      </div>
+      ${progressBar(progress)}
+      <p style="font-size:12px;color:var(--text2);margin-top:8px;">Keep going! You're doing great. Next milestone at 85%.</p>
+    `)}
+  </div>`;
+}
+
+// ===============================================================
+// DOMAIN DISCOVERY
+// ===============================================================
+function renderDomainDiscovery(){
+  return `
+  <div style="padding:28px 20px;">
+    <h1 class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:6px;">Domain <span class="neon-text">Discovery</span></h1>
+    <p style="color:var(--text2);margin-bottom:24px;">How would you like to find your ideal tech domain?</p>
+    <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:700px;margin-bottom:32px;">
+      <div class="glass glass-hover" style="padding:28px;text-align:center;cursor:pointer;" onclick="showAIDiscover()">
+        <div style="font-size:40px;margin-bottom:12px;">🤖</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;">
+          <h3 class="font-syne" style="font-size:17px;font-weight:700;">AI Recommend</h3>${aiBadge()}
+        </div>
+        <p style="font-size:13px;color:var(--text2);">Tell AI your interests and get personalized matches</p>
+      </div>
+      <div class="glass glass-hover" style="padding:28px;text-align:center;cursor:pointer;" onclick="showBrowseDomains()">
+        <div style="font-size:40px;margin-bottom:12px;">🗂️</div>
+        <h3 class="font-syne" style="font-size:17px;font-weight:700;margin-bottom:8px;">Browse Domains</h3>
+        <p style="font-size:13px;color:var(--text2);">Explore all 8 domains and pick what excites you</p>
+      </div>
+    </div>
+    <div id="discover-panel"></div>
+  </div>`;
+}
+
+function showAIDiscover(){
+  document.getElementById('discover-panel').innerHTML=`
+  ${glassCard(`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <h2 class="font-syne" style="font-size:20px;font-weight:700;">AI Domain Matcher</h2>${aiBadge()}
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;color:var(--text2);display:block;margin-bottom:6px;">What are your interests?</label>
+      <textarea class="input-field" id="ai-interests" rows="3" placeholder="I enjoy building things, solving puzzles, working with data..." style="resize:none;"></textarea>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-size:13px;color:var(--text2);display:block;margin-bottom:6px;">Current skills (optional)</label>
+      <input class="input-field" id="ai-skills" placeholder="Python basics, HTML/CSS, math..."/>
+    </div>
+    <button class="btn-primary" onclick="runAIMatch()" id="ai-match-btn">✦ Get AI Recommendations</button>
+    <div id="ai-results" style="margin-top:22px;"></div>
+  `)}`;
+}
+
+async function runAIMatch(){
+  const interests=document.getElementById('ai-interests').value;
+  const skills=document.getElementById('ai-skills').value;
+  if(!interests){alert('Please describe your interests first.');return;}
+  const btn=document.getElementById('ai-match-btn');
+  btn.disabled=true;btn.innerHTML=`${spinner()} Analyzing...`;
+  document.getElementById('ai-results').innerHTML=`<div style="display:flex;align-items:center;gap:10px;color:var(--text2);padding:20px 0;">${spinner()} AI is matching your profile...</div>`;
+  const result=await callClaude([{role:'user',content:`Based on these interests: "${interests}" and skills: "${skills}", recommend the top 3 tech domains from: AI/ML, Web Dev, Cybersecurity, Data Science, App Dev, Cloud, UI/UX, DevOps. For each give a match percentage and 2-line reason. Format as JSON array: [{"domain":"...","match":85,"reason":"..."}]`}],'You are a career guidance AI. Respond ONLY with valid JSON array. No markdown, no extra text.');
+  let recs=[];
+  try{recs=JSON.parse((result||'').replace(/```json|```/g,'').trim());}
+  catch{recs=[{domain:'AI/ML',match:82,reason:'Your analytical thinking and problem-solving interest align well with machine learning.'},{domain:'Data Science',match:71,reason:'Working with data and deriving insights matches your described skills.'},{domain:'Web Dev',match:63,reason:'Creative and logical mindset suits full-stack development well.'}];}
+  btn.disabled=false;btn.innerHTML='✦ Get AI Recommendations';
+  document.getElementById('ai-results').innerHTML=`
+    <h3 class="font-syne" style="font-size:17px;font-weight:700;margin-bottom:14px;">Your Personalized Matches</h3>
+    ${recs.map((rec,i)=>{
+      const dom=DOMAINS.find(d=>d.name.toLowerCase().includes(rec.domain.toLowerCase().split('/')[0].toLowerCase().trim()))||DOMAINS[i%DOMAINS.length];
+      return `<div class="glass" style="padding:18px;margin-bottom:12px;${i===0?`background:${dom.color}0a;border-color:${dom.color}30;`:''}"}>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${i===0?badge('🏆 Top Match','#f59e0b'):''}
+            <span class="font-syne" style="font-size:15px;font-weight:700;">${rec.domain}</span>
+          </div>
+          <span class="font-mono" style="font-size:20px;font-weight:700;color:${dom.color};">${rec.match}%</span>
+        </div>
+        ${progressBar(rec.match)}
+        <p style="font-size:13px;color:var(--text2);margin-top:10px;line-height:1.6;">${rec.reason}</p>
+        <button class="btn-primary" onclick="selectDomainAndContinue('${dom.id}')" style="margin-top:12px;padding:8px 18px;font-size:13px;">Choose ${rec.domain} →</button>
+      </div>`;
+    }).join('')}`;
+}
+
+function showBrowseDomains(){
+  document.getElementById('discover-panel').innerHTML=`
+    <h3 class="font-syne" style="font-size:18px;font-weight:700;margin-bottom:16px;">Choose Your Domain</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">
+      ${DOMAINS.map(d=>`
+      <div class="glass glass-hover" id="dom-card-${d.id}" style="padding:22px;cursor:pointer;transition:all .3s;" onclick="selectDomainCard('${d.id}')">
+        <div style="font-size:36px;margin-bottom:10px;">${d.icon}</div>
+        <h3 class="font-syne" style="font-size:16px;font-weight:700;margin-bottom:6px;">${d.name}</h3>
+        <p style="font-size:12px;color:var(--text2);line-height:1.6;">${d.desc}</p>
+      </div>`).join('')}
+    </div>
+    <div id="domain-confirm" style="text-align:center;margin-top:24px;display:none;">
+      <button class="btn-primary" id="domain-confirm-btn" style="padding:12px 36px;">Continue →</button>
+    </div>`;
+}
+
+let _selectedDomain=null;
+function selectDomainCard(id){
+  _selectedDomain=id;
+  DOMAINS.forEach(d=>{
+    const el=document.getElementById(`dom-card-${d.id}`);
+    if(!el)return;
+    if(d.id===id){el.style.borderColor=d.color;el.style.background=`${d.color}10`;}
+    else{el.style.borderColor='rgba(255,255,255,0.08)';el.style.background='rgba(255,255,255,0.04)';}
+  });
+  const conf=document.getElementById('domain-confirm');
+  conf.style.display='block';
+  const d=DOMAINS.find(d=>d.id===id);
+  document.getElementById('domain-confirm-btn').onclick=()=>selectDomainAndContinue(id);
+  document.getElementById('domain-confirm-btn').textContent=`Continue with ${d.name} →`;
+}
+
+function selectDomainAndContinue(id){
+  user.selectedDomain=id;
+  showPage('quiz');
+}
+
+// ===============================================================
+// QUIZ
+// ===============================================================
+let quizQuestions=[];
+let quizTimeLeft=30;
+let quizTimerInterval=null;
+let quizSelected=null;
+
+function initQuiz(){
+  const key=user.selectedDomain||'default';
+  quizQuestions=QUIZ_QUESTIONS[key]||QUIZ_QUESTIONS.default;
+  quizAnswers=[];
+  quizCurrent=0;
+  quizSelected=null;
+  renderQuizQuestion();
+  startQuizTimer();
+}
+
+function renderQuiz(){
+  return `<div id="quiz-wrap" style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:28px 20px;"></div>`;
+}
+
+function renderQuizQuestion(){
+  const wrap=document.getElementById('quiz-wrap');
+  if(quizCurrent>=quizQuestions.length){finishQuiz();return;}
+  const q=quizQuestions[quizCurrent];
+  const prog=Math.round((quizCurrent/quizQuestions.length)*100);
+  wrap.innerHTML=`
+  <div style="max-width:680px;width:100%;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <span style="color:var(--text2);font-size:14px;">Question ${quizCurrent+1} of ${quizQuestions.length}</span>
+      <div style="width:44px;height:44px;border-radius:50%;border:3px solid var(--cyan);display:flex;align-items:center;justify-content:center;">
+        <span class="font-mono" id="quiz-timer" style="font-size:13px;color:var(--cyan);">30</span>
+      </div>
+    </div>
+    ${progressBar(prog)}
+    <div class="glass" style="padding:28px;margin-top:20px;">
+      <div style="margin-bottom:10px;">${badge(`Difficulty ${q.d}`,'#8b5cf6')}</div>
+      <h2 class="font-syne" style="font-size:20px;font-weight:700;margin-bottom:24px;line-height:1.4;">${q.q}</h2>
+      <div id="quiz-opts" class="quiz-options" style="display:flex;flex-direction:column;gap:10px;">
+        ${q.opts.map((opt,i)=>`
+        <button id="qopt-${i}" onclick="answerQuiz(${i})" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:13px 18px;color:var(--text);cursor:pointer;text-align:left;font-size:14px;transition:all .2s;font-family:'Inter',sans-serif;">
+          <span style="color:var(--text2);margin-right:10px;font-family:'JetBrains Mono';font-size:12px;">${String.fromCharCode(65+i)}.</span>${opt}
+        </button>`).join('')}
+      </div>
+    </div>
+  </div>`;
+  quizTimeLeft=30;
+  document.getElementById('quiz-timer').textContent='30';
+}
+
+function startQuizTimer(){
+  clearInterval(quizTimerInterval);
+  quizTimerInterval=setInterval(()=>{
+    quizTimeLeft--;
+    const el=document.getElementById('quiz-timer');
+    if(el){el.textContent=quizTimeLeft;el.style.color=quizTimeLeft<10?'#ef4444':'var(--cyan)';}
+    if(quizTimeLeft<=0)answerQuiz(-1);
+  },1000);
+}
+
+function answerQuiz(idx){
+  clearInterval(quizTimerInterval);
+  const q=quizQuestions[quizCurrent];
+  quizAnswers.push({q:q.q,selected:idx,correct:q.c,isCorrect:idx===q.c});
+  // Visual feedback
+  const opts=document.querySelectorAll('[id^="qopt-"]');
+  opts.forEach((btn,i)=>{
+    btn.onclick=null;btn.style.cursor='default';
+    if(i===q.c){btn.style.background='rgba(16,185,129,0.15)';btn.style.borderColor='#10b981';}
+    else if(i===idx&&i!==q.c){btn.style.background='rgba(239,68,68,0.15)';btn.style.borderColor='#ef4444';}
+  });
+  setTimeout(()=>{
+    quizCurrent++;
+    if(quizCurrent<quizQuestions.length){renderQuizQuestion();startQuizTimer();}
+    else{finishQuiz();}
+  },700);
+}
+
+function finishQuiz(){
+  clearInterval(quizTimerInterval);
+  const score=quizAnswers.filter(a=>a.isCorrect).length;
+  user.quizScore=score;
+  document.getElementById('quiz-wrap').innerHTML=`
+  <div class="glass animate-fadeup" style="max-width:480px;width:100%;padding:40px;text-align:center;">
+    <div style="font-size:60px;margin-bottom:14px;">🎉</div>
+    <h2 class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:10px;">Quiz Complete!</h2>
+    <div class="neon-text font-syne" style="font-size:54px;font-weight:800;">${score}/${quizQuestions.length}</div>
+    <p style="color:var(--text2);margin-top:6px;">Questions answered correctly</p>
+    <button class="btn-primary" onclick="showPage('tasks')" style="margin-top:24px;width:100%;padding:14px;">Continue to Tasks →</button>
+  </div>`;
+}
+
+// ===============================================================
+// TASKS
+// ===============================================================
+let taskStates=null;
+function renderTasks(){
+  const dom=DOMAINS.find(d=>d.id===user.selectedDomain)||DOMAINS[0];
+  if(!taskStates)taskStates=[
+    {id:1,title:`Build a simple ${dom.name} project`,diff:'Easy',xp:50,done:false,hint:'Start with a basic example and iterate step by step.'},
+    {id:2,title:'Write clean documentation',diff:'Easy',xp:30,done:false,hint:'Use markdown format with clear sections and examples.'},
+    {id:3,title:`Analyze a real-world ${dom.name} problem`,diff:'Medium',xp:80,done:false,hint:'Look for case studies and open datasets online.'},
+    {id:4,title:`Implement a core ${dom.name} algorithm`,diff:'Medium',xp:100,done:false,hint:'Focus on understanding the logic before optimizing.'},
+    {id:5,title:'Present your solution clearly',diff:'Hard',xp:150,done:false,hint:'Use diagrams. Focus on problem → solution → impact.'},
+  ];
+  const done=taskStates.filter(t=>t.done).length;
+  return `
+  <div style="padding:28px 20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:10px;">
+      <h1 class="font-syne" style="font-size:26px;font-weight:800;">Mini <span class="neon-text">Tasks</span></h1>
+      ${badge(`${done}/${taskStates.length} Done`,'#f59e0b')}
+    </div>
+    <p style="color:var(--text2);margin-bottom:8px;">Domain: ${dom.name}</p>
+    ${progressBar(done,taskStates.length)}
+    <div id="tasks-list" style="display:flex;flex-direction:column;gap:14px;margin-top:24px;"></div>
+    <div style="text-align:center;margin-top:28px;">
+      <button class="btn-primary" onclick="finishTasks()" style="padding:12px 36px;">View Results →</button>
+    </div>
+  </div>`;
+}
+
+function renderTasksPage(){
+  const list=document.getElementById('tasks-list');
+  if(!list)return;
+  list.innerHTML=taskStates.map(task=>`
+  <div class="glass" style="padding:20px;opacity:${task.done?.7:1};border-color:${task.done?'rgba(16,185,129,0.3)':'rgba(255,255,255,0.08)'};">
+    <div style="display:flex;align-items:flex-start;gap:14px;">
+      <button onclick="toggleTask(${task.id})" style="width:24px;height:24px;border-radius:6px;border:2px solid ${task.done?'#10b981':'rgba(255,255,255,0.2)'};background:${task.done?'#10b981':'transparent'};cursor:pointer;flex-shrink:0;margin-top:2px;color:white;font-size:12px;">${task.done?'✓':''}</button>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+          <span class="font-syne" style="font-size:15px;font-weight:600;${task.done?'text-decoration:line-through;color:var(--text2);':''}">${task.title}</span>
+          ${badge(task.diff,task.diff==='Easy'?'#10b981':task.diff==='Medium'?'#f59e0b':'#ef4444')}
+          ${badge(`+${task.xp} XP`,'#8b5cf6')}
+        </div>
+        <div id="hint-${task.id}" style="display:none;background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.2);border-radius:10px;padding:10px 14px;margin-top:8px;font-size:13px;color:var(--text2);line-height:1.7;"></div>
+        <button onclick="getAIHint(${task.id},'${task.title.replace(/'/g,'').substring(0,40)}')" class="btn-ghost" style="margin-top:8px;padding:5px 12px;font-size:12px;display:inline-flex;align-items:center;gap:5px;">
+          ${aiBadge()} AI Hint
+        </button>
+      </div>
+    </div>
+  </div>`).join('');
+}
+
+function toggleTask(id){
+  taskStates=taskStates.map(t=>t.id===id?{...t,done:!t.done}:t);
+  showPage('tasks');
+}
+
+async function getAIHint(id,title){
+  const el=document.getElementById(`hint-${id}`);
+  if(!el)return;
+  if(el.style.display!=='none'){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML=`<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>`;
+  const dom=DOMAINS.find(d=>d.id===user.selectedDomain)||DOMAINS[0];
+  const hint=await callClaude([{role:'user',content:`Give a practical, specific hint for this task: "${title}" in the context of ${dom.name}. Include 3 concrete steps. Under 120 words.`}],'You are a helpful coding mentor. Be practical and concise.');
+  el.innerHTML=hint||taskStates.find(t=>t.id===id)?.hint||'Start simple, iterate, and document your progress.';
+}
+
+function finishTasks(){
+  user.tasksCompleted=taskStates.filter(t=>t.done).length;
+  user.xp=(user.xp||0)+taskStates.filter(t=>t.done).reduce((s,t)=>s+t.xp,0);
+  showPage('results');
+}
+
+// ===============================================================
+// RESULTS
+// ===============================================================
+function renderResults(){
+  const score=user.quizScore||0;
+  const total=5;
+  const pct=Math.round((score/total)*100);
+  const d=domainOf();
+  return `
+  <div style="padding:28px 20px;max-width:860px;">
+    <h1 class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:24px;text-align:center;">Your <span class="neon-text">Results</span></h1>
+    <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+      ${glassCard(`
+        <div style="text-align:center;">
+          <div style="font-size:48px;margin-bottom:8px;">${d.icon}</div>
+          <h2 class="font-syne" style="font-size:22px;font-weight:700;color:${d.color};">${d.name}</h2>
+          <p style="color:var(--text2);font-size:13px;margin-top:4px;">Top Matched Domain</p>
+          <div class="font-syne neon-text" style="font-size:52px;font-weight:800;margin-top:10px;">${pct}%</div>
+          <p style="color:var(--text2);font-size:12px;">Match Score</p>
+        </div>`)}
+      ${glassCard(`
+        <h3 class="font-syne" style="font-weight:700;margin-bottom:14px;">Quiz Performance</h3>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          ${['Problem Solving','Domain Knowledge','Logical Thinking','Quick Thinking','Accuracy'].map((s,i)=>`
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;">
+              <span>${s}</span><span class="font-mono" style="color:var(--cyan);">${[pct,pct-10,pct+5,pct-5,pct+3][i]}%</span>
+            </div>
+            ${progressBar([pct,pct-10,pct+5,pct-5,pct+3][i])}
+          </div>`).join('')}
+        </div>`)}
+    </div>
+    <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+      ${glassCard(`<h3 class="font-syne" style="font-weight:700;margin-bottom:14px;color:#10b981;">💪 Strengths</h3>${['Problem solving','Logical thinking','Quick learner'].map(s=>`<div style="display:flex;gap:8px;margin-bottom:8px;font-size:14px;"><span style="color:#10b981;">✓</span>${s}</div>`).join('')}`)}
+      ${glassCard(`<h3 class="font-syne" style="font-weight:700;margin-bottom:14px;color:#f59e0b;">📈 To Improve</h3>${['Math fundamentals','Version control','Project experience'].map(s=>`<div style="display:flex;gap:8px;margin-bottom:8px;font-size:14px;"><span style="color:#f59e0b;">→</span>${s}</div>`).join('')}`)}
+    </div>
+    <div style="text-align:center;">
+      <button class="btn-primary" onclick="showPage('goal')" style="padding:13px 36px;">Set Your Goal →</button>
+    </div>
+  </div>`;
+}
+
+// ===============================================================
+// GOAL
+// ===============================================================
+let selectedGoal=null;
+let selectedDuration=null;
+function renderGoal(){
+  return `
+  <div style="padding:28px 20px;max-width:800px;">
+    <h1 class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:24px;text-align:center;">Set Your <span class="neon-text">Goal</span></h1>
+    <h3 class="font-syne" style="font-size:17px;font-weight:700;margin-bottom:16px;">Primary Goal</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px;margin-bottom:32px;">
+      ${[['job','Get a Job','💼','Land your first tech role'],['startup','Build Startup','🚀','Create your own product'],['freelance','Freelancing','💻','Work independently'],['research','Research','🔬','Academic path'],['higher_studies','Higher Studies','🎓','MS/PhD prep']].map(([id,name,ic,desc])=>`
+      <div id="goal-${id}" class="glass glass-hover" style="padding:18px;text-align:center;cursor:pointer;transition:all .3s;" onclick="selectGoal('${id}')">
+        <div style="font-size:30px;margin-bottom:7px;">${ic}</div>
+        <div class="font-syne" style="font-size:13px;font-weight:700;margin-bottom:3px;">${name}</div>
+        <div style="font-size:11px;color:var(--text2);">${desc}</div>
+      </div>`).join('')}
+    </div>
+    <h3 class="font-syne" style="font-size:17px;font-weight:700;margin-bottom:16px;">Duration</h3>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;">
+      ${['3 months','6 months','1 year','2 years'].map(d=>`<button id="dur-${d.replace(' ','-')}" onclick="selectDur('${d}')" class="btn-ghost" style="font-size:14px;">${d}</button>`).join('')}
+    </div>
+    <div style="text-align:center;">
+      <button class="btn-primary" onclick="proceedToRoadmap()" style="padding:13px 36px;">Generate Roadmap →</button>
+    </div>
+  </div>`;
+}
+
+function selectGoal(id){
+  selectedGoal=id;
+  document.querySelectorAll('[id^="goal-"]').forEach(el=>{el.style.borderColor='rgba(255,255,255,0.08)';el.style.background='rgba(255,255,255,0.04)';});
+  const el=document.getElementById(`goal-${id}`);
+  if(el){el.style.borderColor='#06b6d4';el.style.background='rgba(6,182,212,0.1)';}
+}
+
+function selectDur(d){
+  selectedDuration=d;
+  document.querySelectorAll('[id^="dur-"]').forEach(el=>{el.style.background='transparent';el.style.borderColor='rgba(255,255,255,0.15)';el.style.color='var(--text2)';});
+  const el=document.getElementById(`dur-${d.replace(' ','-')}`);
+  if(el){el.style.background='rgba(6,182,212,0.15)';el.style.borderColor='#06b6d4';el.style.color='#06b6d4';}
+}
+
+function proceedToRoadmap(){
+  if(!selectedGoal||!selectedDuration){alert('Please select a goal and duration.');return;}
+  user.goal=selectedGoal;user.duration=selectedDuration;
+  showPage('roadmap');
+}
+
+// ===============================================================
+// ROADMAP
+// ===============================================================
+function renderRoadmapPage(){
+  return `
+  <div style="padding:28px 20px;max-width:920px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+      <h1 class="font-syne" style="font-size:26px;font-weight:800;">Your <span class="neon-text">Roadmap</span></h1>
+      <div style="display:flex;gap:10px;align-items:center;">${aiBadge()} <button class="btn-ghost" onclick="initRoadmap()" style="padding:8px 16px;font-size:13px;">↻ Regenerate</button></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+      ${badge(domainOf().name,'#06b6d4')}${badge(user.goal||'job','#8b5cf6')}${badge(user.duration||'6 months','#f59e0b')}
+    </div>
+    ${glassCard(`
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <div>
+          <label style="font-size:13px;color:var(--text2);display:block;margin-bottom:4px;">Daily Study Hours</label>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="range" min="1" max="8" value="2" id="daily-hrs" oninput="document.getElementById('hrs-val').textContent=this.value+'h/day'" style="width:130px;accent-color:#06b6d4;"/>
+            <span id="hrs-val" class="font-mono" style="color:#06b6d4;font-size:14px;">2h/day</span>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="initRoadmap()" style="padding:8px 18px;font-size:13px;">✦ Recalculate</button>
+      </div>`)}
+    <div id="roadmap-content" style="margin-top:22px;"><div style="display:flex;align-items:center;gap:10px;padding:30px;color:var(--text2);">${spinner()} AI generating your personalized roadmap...</div></div>
+  </div>`;
+}
+
+async function initRoadmap(){
+  const el=document.getElementById('roadmap-content');
+  if(!el)return;
+  el.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:30px;color:var(--text2);">${spinner()} AI generating your personalized roadmap...</div>`;
+  const dom=domainOf().name;
+  const goal=user.goal||'job';
+  const dur=user.duration||'6 months';
+  const hrs=document.getElementById('daily-hrs')?.value||2;
+  const result=await callClaude([{role:'user',content:`Create a learning roadmap for: Domain: ${dom}, Goal: ${goal}, Duration: ${dur}, Daily hours: ${hrs}. Include 5 phases with: phase name, title, topics (3-4), project, milestone, mistake to avoid, certification. JSON: {"phases":[{"phase":"Phase 1","title":"...","topics":["..."],"project":"...","milestone":"...","mistake":"...","cert":"...","weeks":2}]}`}],'You are a career roadmap expert. Return ONLY valid JSON. No markdown.',1500);
+  let phases=[];
+  try{const p=JSON.parse((result||'').replace(/```json|```/g,'').trim());phases=p.phases||p;}
+  catch{phases=[
+    {phase:'Phase 1',title:'Foundation',topics:['Core concepts','Setup & tools','Basic syntax','First project'],project:'Hello World App',milestone:'Run your first program',mistake:'Skipping fundamentals',cert:'None yet',weeks:2},
+    {phase:'Phase 2',title:'Core Skills',topics:['Data structures','Libraries','APIs','Best practices'],project:'CRUD Application',milestone:'Build a working API',mistake:'Copy-pasting without understanding',cert:'Beginner Certificate',weeks:3},
+    {phase:'Phase 3',title:'Advanced Topics',topics:['Architecture patterns','Testing','Performance','Security'],project:'Full Project',milestone:'Deploy to production',mistake:'Ignoring testing',cert:'Intermediate Course',weeks:4},
+    {phase:'Phase 4',title:'Real World',topics:['Industry tools','Collaboration','Code review','CI/CD'],project:'Open Source Contribution',milestone:'PR merged',mistake:'Working in isolation',cert:'Domain Certification',weeks:3},
+    {phase:'Phase 5',title:'Portfolio & Jobs',topics:['Portfolio projects','Resume','Interview prep','Networking'],project:'Capstone Project',milestone:'First interview',mistake:'Applying too early',cert:'Professional Cert',weeks:4},
+  ];}
+  const colors=['#06b6d4','#8b5cf6','#f59e0b','#10b981','#ef4444','#3b82f6'];
+  el.innerHTML=phases.map((phase,i)=>`
+  <div style="display:flex;gap:18px;margin-bottom:22px;">
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div style="width:46px;height:46px;border-radius:50%;background:${colors[i%colors.length]}20;border:2px solid ${colors[i%colors.length]};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span class="font-mono" style="font-size:13px;color:${colors[i%colors.length]};font-weight:700;">${i+1}</span>
+      </div>
+      ${i<phases.length-1?`<div style="width:2px;flex:1;background:${colors[i%colors.length]}25;margin-top:5px;min-height:20px;"></div>`:''}
+    </div>
+    <div class="glass" style="flex:1;padding:20px;border-color:${colors[i%colors.length]}18;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <div>
+          <span style="color:${colors[i%colors.length]};font-size:11px;font-weight:700;font-family:'JetBrains Mono';">${phase.phase}</span>
+          <h3 class="font-syne" style="font-size:18px;font-weight:700;margin-top:2px;">${phase.title}</h3>
+        </div>
+        ${badge(`${phase.weeks} weeks`,colors[i%colors.length])}
+      </div>
+      <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div>
+          <p style="font-size:11px;color:var(--text2);font-weight:600;margin-bottom:6px;">TOPICS</p>
+          ${(phase.topics||[]).map(t=>`<div style="font-size:13px;padding:2px 0;display:flex;gap:6px;"><span style="color:${colors[i%colors.length]};">→</span>${t}</div>`).join('')}
+        </div>
+        <div>
+          <p style="font-size:11px;color:var(--text2);font-weight:600;margin-bottom:4px;">PROJECT</p>
+          <p style="font-size:13px;margin-bottom:10px;">${phase.project}</p>
+          <p style="font-size:11px;color:var(--text2);font-weight:600;margin-bottom:4px;">MILESTONE</p>
+          <p style="font-size:13px;color:#10b981;">✓ ${phase.milestone}</p>
+        </div>
+      </div>
+      ${phase.cert&&phase.cert!=='None yet'?`<div style="margin-top:12px;padding:8px 12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:13px;color:#f59e0b;">🏅 ${phase.cert}</div>`:''}
+      ${phase.mistake?`<div style="margin-top:8px;padding:8px 12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;font-size:13px;color:#ef4444;">⚠️ Avoid: ${phase.mistake}</div>`:''}
+    </div>
+  </div>`).join('');
+}
+
+// ===============================================================
+// SKILL GAP
+// ===============================================================
+function renderSkillGap(){
+  return `
+  <div style="padding:28px 20px;max-width:920px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;">
+      <h1 class="font-syne" style="font-size:26px;font-weight:800;">Skill Gap <span class="neon-text">Analyzer</span></h1>${aiBadge()}
+    </div>
+    ${glassCard(`
+      <label style="font-size:13px;color:var(--text2);display:block;margin-bottom:8px;">What skills do you currently have? (optional)</label>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <input class="input-field" id="sg-skills" placeholder="e.g., HTML, CSS, basic JavaScript, Python..." style="flex:1;min-width:200px;"/>
+        <button class="btn-primary" onclick="runSkillGap()">✦ Analyze Gap</button>
+      </div>`,'margin-bottom:20px;')}
+    <div id="sg-results"><div style="text-align:center;padding:40px;color:var(--text2);">Click "Analyze Gap" to see your skill analysis</div></div>
+  </div>`;
+}
+
+async function runSkillGap(){
+  const skills=document.getElementById('sg-skills').value;
+  const el=document.getElementById('sg-results');
+  el.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:24px;color:var(--text2);">${spinner()} AI analyzing your skill gap...</div>`;
+  const dom=domainOf().name;
+  const result=await callClaude([{role:'user',content:`Analyze skill gap for ${dom} domain. User's current skills: "${skills||'beginner'}". List required skills vs current. Format as JSON: {"required":[{"skill":"...","priority":"High","learned":false}],"current":[{"skill":"...","level":70}],"recommendations":["action1","action2","action3"]}`}],'You are a skills assessment expert. Return ONLY valid JSON.',1200);
+  let data=null;
+  try{data=JSON.parse((result||'').replace(/```json|```/g,'').trim());}
+  catch{data={required:[{skill:'JavaScript',priority:'High',learned:true},{skill:'Node.js',priority:'High',learned:false},{skill:'Databases',priority:'High',learned:false},{skill:'REST APIs',priority:'Med',learned:false},{skill:'Testing',priority:'Med',learned:false},{skill:'Docker',priority:'Low',learned:false}],current:[{skill:'HTML/CSS',level:80},{skill:'JavaScript',level:60},{skill:'Git',level:65}],recommendations:['Complete Node.js crash course on freeCodeCamp','Build 2 REST APIs with Express.js','Learn MongoDB for 1 project','Set up Jest for existing projects']};}
+  el.innerHTML=`
+  <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+    ${glassCard(`
+      <h3 class="font-syne" style="font-weight:700;margin-bottom:14px;">Required Skills for ${dom}</h3>
+      ${(data.required||[]).map(s=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:15px;">${s.learned?'✅':'❌'}</span>
+          <span style="font-size:14px;">${s.skill}</span>
+        </div>
+        ${badge(s.priority,s.priority==='High'?'#ef4444':s.priority==='Med'?'#f59e0b':'#10b981')}
+      </div>`).join('')}`)}
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      ${glassCard(`
+        <h3 class="font-syne" style="font-weight:700;margin-bottom:14px;">Your Current Skills</h3>
+        ${(data.current||[]).map(s=>`<div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;">
+            <span>${s.skill}</span><span class="font-mono" style="color:#06b6d4;">${s.level}%</span>
+          </div>${progressBar(s.level)}</div>`).join('')}`)}
+      ${glassCard(`
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+          <h3 class="font-syne" style="font-weight:700;">AI Recommendations</h3>${aiBadge()}
+        </div>
+        ${(data.recommendations||[]).map(r=>`<div style="display:flex;gap:8px;margin-bottom:10px;padding:8px 12px;background:rgba(6,182,212,0.05);border-radius:8px;border:1px solid rgba(6,182,212,0.1);font-size:13px;line-height:1.5;"><span style="color:#06b6d4;">→</span>${r}</div>`).join('')}`)}
+    </div>
+  </div>`;
+}
+
+// ===============================================================
+// INTERNSHIP
+// ===============================================================
+function renderInternship(){
+  const dom=domainOf().name;
+  const totalDone=kanbanCols.done.length;
+  const total=Object.values(kanbanCols).flat().length;
+  const readiness=Math.min(100,40+totalDone*8);
+  const colDef={todo:{label:'📋 To Do',color:'#06b6d4'},inprogress:{label:'⚡ In Progress',color:'#f59e0b'},review:{label:'👀 Review',color:'#8b5cf6'},done:{label:'✅ Done',color:'#10b981'}};
+  return `
+  <div style="padding:28px 20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:20px;">
+      <div>
+        <h1 class="font-syne" style="font-size:26px;font-weight:800;">Internship <span class="neon-text">Simulator</span></h1>
+        <p style="color:var(--text2);font-size:14px;">Domain: ${dom}</p>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center;">
+        <div style="text-align:center;">
+          <div class="font-syne" style="font-size:22px;font-weight:800;color:#10b981;">${readiness}%</div>
+          <div style="font-size:12px;color:var(--text2);">Readiness</div>
+        </div>
+        <button class="btn-primary" onclick="addAITask()" style="padding:10px 18px;font-size:13px;">${aiBadge()} Add Task</button>
+      </div>
+    </div>
+    ${glassCard(`<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;"><span style="font-size:14px;">Tasks Completed: <strong>${totalDone}/${total}</strong></span><div style="width:200px;">${progressBar(totalDone,total)}</div></div>`,'margin-bottom:18px;')}
+    <div class="kanban-board" style="display:flex;gap:14px;overflow-x:auto;padding-bottom:12px;">
+      ${Object.entries(colDef).map(([colId,{label,color}])=>`
+      <div class="kanban-col" id="col-${colId}" ondragover="event.preventDefault()" ondrop="dropCard('${colId}')">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <span class="font-syne" style="font-size:13px;font-weight:700;color:${color};">${label}</span>
+          <span style="background:${color}20;color:${color};padding:2px 8px;border-radius:20px;font-size:12px;font-family:'JetBrains Mono';">${kanbanCols[colId].length}</span>
+        </div>
+        ${kanbanCols[colId].map(card=>`
+        <div class="kanban-card" draggable="true" ondragstart="startDrag(${card.id},'${colId}')" id="card-${card.id}">
+          <p style="font-size:13px;font-weight:500;margin-bottom:10px;line-height:1.5;">${card.title}</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            ${badge(card.priority,card.priority==='High'?'#ef4444':card.priority==='Medium'?'#f59e0b':'#10b981')}
+            <span style="font-size:11px;color:#8b5cf6;font-family:'JetBrains Mono';">+${card.xp}XP</span>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap;">
+            ${Object.keys(colDef).filter(c=>c!==colId).map(c=>`<button onclick="moveCard(${card.id},'${colId}','${c}')" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text2);padding:2px 7px;border-radius:4px;font-size:10px;cursor:pointer;">→${c.replace('inprogress','WIP')}</button>`).join('')}
+          </div>
+        </div>`).join('')}
+        ${kanbanCols[colId].length===0?`<div style="text-align:center;padding:28px 10px;color:var(--text2);font-size:13px;">Drop cards here</div>`:''}
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+let _dragCard=null;let _dragFrom=null;
+function startDrag(id,col){_dragCard=id;_dragFrom=col;}
+function dropCard(toCol){if(_dragCard!==null&&_dragFrom)moveCard(_dragCard,_dragFrom,toCol);}
+function moveCard(id,from,to){
+  const idx=kanbanCols[from].findIndex(c=>c.id===id);
+  if(idx===-1)return;
+  const card=kanbanCols[from].splice(idx,1)[0];
+  kanbanCols[to].push(card);
+  _dragCard=null;_dragFrom=null;
+  renderAppPage('internship');
+}
+
+async function addAITask(){
+  const dom=domainOf().name;
+  const result=await callClaude([{role:'user',content:`Generate a realistic internship task for a ${dom} intern. Title under 60 chars. Format: {"title":"...","priority":"High"}`}],'Return ONLY valid JSON.');
+  let card={id:Date.now(),title:`New ${dom} task`,priority:'Medium',xp:60};
+  try{const p=JSON.parse((result||'').replace(/```json|```/g,'').trim());card.title=p.title;card.priority=p.priority;}catch{}
+  kanbanCols.todo.push(card);
+  renderAppPage('internship');
+}
+
+// ===============================================================
+// MOCK INTERVIEW
+// ===============================================================
+let interviewStage='setup';
+function renderInterviewSetup(){
+  return `
+  <div style="padding:28px 20px;max-width:700px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;">
+      <h1 class="font-syne" style="font-size:26px;font-weight:800;">Mock <span class="neon-text">Interview</span></h1>${aiBadge()}
+    </div>
+    ${glassCard(`
+      <h2 class="font-syne" style="font-size:19px;font-weight:700;margin-bottom:18px;">Configure Interview</h2>
+      <div style="margin-bottom:18px;">
+        <label style="font-size:13px;color:var(--text2);display:block;margin-bottom:6px;">Target Role (optional)</label>
+        <input class="input-field" id="iv-role" placeholder="e.g., Junior Developer, SDE-1..."/>
+      </div>
+      <div style="padding:14px 16px;background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.2);border-radius:12px;margin-bottom:18px;">
+        <p style="font-size:13px;color:var(--text2);line-height:1.7;"><strong style="color:#06b6d4;">How it works:</strong> The AI conducts a realistic 5-question technical interview. You get real-time feedback and a final score.</p>
+      </div>
+      <button class="btn-primary" onclick="startInterview()" style="width:100%;padding:13px;">Start Interview →</button>`)}
+  </div>`;
+}
+
+async function startInterview(){
+  interviewMessages=[];
+  const role=document.getElementById('iv-role')?.value||'Developer';
+  const dom=domainOf().name;
+  document.getElementById('page-content').innerHTML=`
+  <div style="padding:28px 20px;height:calc(100vh - 100px);display:flex;flex-direction:column;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <h1 class="font-syne" style="font-size:20px;font-weight:800;">Live Interview</h1>
+        ${badge('In Progress','#f59e0b')}
+      </div>
+      <div id="iv-score-display"></div>
+    </div>
+    <div id="iv-msgs" style="flex:1;overflow-y:auto;margin-bottom:14px;"></div>
+    <div style="display:flex;gap:10px;">
+      <textarea class="input-field" id="iv-input" rows="3" placeholder="Type your answer... (Enter to submit, Shift+Enter for new line)" style="flex:1;resize:none;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitAnswer();}"></textarea>
+      <button class="btn-primary" onclick="submitAnswer()" style="padding:0 18px;align-self:stretch;">Send</button>
+    </div>
+  </div>`;
+  const sys=`You are an experienced ${dom} technical interviewer. Conduct a realistic mock interview. Ask one question at a time. After each answer give brief feedback then ask the next question. After 5 questions give final evaluation with score out of 100 and specific improvements.`;
+  const q=await callClaude([{role:'user',content:`Start a technical mock interview for a ${dom} ${role} role. Ask only the first question.`}],sys,500)||`Welcome! Let's start your ${dom} interview. Can you walk me through your background and what excites you most about ${dom}?`;
+  interviewMessages.push({role:'assistant',content:q});
+  renderIVMessages();
+}
+
+async function submitAnswer(){
+  const input=document.getElementById('iv-input');
+  if(!input||!input.value.trim())return;
+  const msg=input.value.trim();
+  input.value='';
+  interviewMessages.push({role:'user',content:msg});
+  renderIVMessages();
+  const dom=domainOf().name;
+  const qCount=interviewMessages.filter(m=>m.role==='assistant').length;
+  const sys=`You are an experienced ${dom} technical interviewer. Give feedback on the answer, then ${qCount>=5?'provide final evaluation with score out of 100 and 3 improvements':'ask the next technical question'}. Be encouraging but honest. Max 200 words.`;
+  const reply=await callClaude(interviewMessages,sys,600)||'Good answer! Let me ask the next question: Tell me about a challenging problem you solved recently.';
+  interviewMessages.push({role:'assistant',content:reply});
+  renderIVMessages();
+  if(qCount>=5){
+    const scoreMatch=reply.match(/(\d{2,3})\/100|score[:\s]+(\d{2,3})/i);
+    const sc=scoreMatch?parseInt(scoreMatch[1]||scoreMatch[2]):70;
+    document.getElementById('iv-score-display').innerHTML=`<span class="font-syne" style="font-size:18px;font-weight:800;color:${sc>=70?'#10b981':'#f59e0b'};">Score: ${sc}/100</span>`;
+    document.querySelector('#page-content .btn-primary').textContent='↻ New Interview';
+    document.querySelector('#page-content .btn-primary').onclick=()=>showPage('interview');
+  }
+}
+
+function renderIVMessages(){
+  const el=document.getElementById('iv-msgs');
+  if(!el)return;
+  el.innerHTML=interviewMessages.map(m=>`
+  <div style="display:flex;justify-content:${m.role==='user'?'flex-end':'flex-start'};margin-bottom:14px;">
+    ${m.role==='assistant'?`<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#06b6d4,#8b5cf6);display:flex;align-items:center;justify-content:center;margin-right:10px;flex-shrink:0;">🤖</div>`:''}
+    <div class="${m.role==='user'?'chat-bubble-user':'chat-bubble-ai'}" style="white-space:pre-wrap;">${m.content}</div>
+  </div>`).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+// ===============================================================
+// PROGRESS
+// ===============================================================
+function renderProgress(){
+  const streakGrid=Array.from({length:35},(_,i)=>Math.random()>.4);
+  return `
+  <div style="padding:28px 20px;max-width:920px;">
+    <h1 class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:22px;">Progress <span class="neon-text">Tracking</span></h1>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:24px;">
+      ${[['📈','78%','Total Progress','#06b6d4'],['🔥',`${user.streak||0}d`,'Day Streak','#f59e0b'],['⏱️','127h','Hours Studied','#8b5cf6'],['✅','34/50','Tasks Done','#10b981']].map(([ic,val,lbl,col])=>`
+      ${glassCard(`<div style="text-align:center;"><div style="font-size:26px;margin-bottom:5px;">${ic}</div><div class="font-syne" style="font-size:24px;font-weight:800;color:${col};">${val}</div><div style="font-size:11px;color:var(--text2);">${lbl}</div></div>`,'padding:18px;')}`).join('')}
+    </div>
+    <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+      ${glassCard(`
+        <h3 class="font-syne" style="font-weight:700;margin-bottom:14px;">Streak Calendar</h3>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">
+          ${streakGrid.map(a=>`<div style="width:100%;padding-top:100%;background:${a?'rgba(6,182,212,0.55)':'rgba(255,255,255,0.05)'};border-radius:3px;position:relative;cursor:pointer;"></div>`).join('')}
+        </div>
+        <div style="display:flex;gap:14px;margin-top:10px;font-size:11px;color:var(--text2);">
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:rgba(6,182,212,0.55);margin-right:4px;"></span>Active</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:rgba(255,255,255,0.05);margin-right:4px;"></span>Inactive</span>
+        </div>`)}
+      ${glassCard(`
+        <h3 class="font-syne" style="font-weight:700;margin-bottom:16px;">Skill Progress</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          ${[['Core Concepts',85],['Practical Projects',70],['Problem Solving',78],['Collaboration',60],['Industry Tools',55]].map(([s,p])=>`
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;">
+              <span>${s}</span><span class="font-mono" style="color:#06b6d4;">${p}%</span>
+            </div>${progressBar(p)}
+          </div>`).join('')}
+        </div>`)}
+    </div>
+  </div>`;
+}
+
+// ===============================================================
+// RESUME
+// ===============================================================
+function renderResumePage(){
+  return `
+  <div style="padding:28px 20px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap;">
+      <h1 class="font-syne" style="font-size:26px;font-weight:800;">Resume <span class="neon-text">Builder</span></h1>
+      ${aiBadge()}
+      ${user.plan!=='premium'?badge('🔒 PDF Export: Premium','#f59e0b'):''}
+    </div>
+    <div id="resume-panel">
+      ${glassCard(`
+        <div style="text-align:center;padding:40px 20px;">
+          <div style="font-size:60px;margin-bottom:14px;">📄</div>
+          <h2 class="font-syne" style="font-size:22px;margin-bottom:10px;">AI Resume Generator</h2>
+          <p style="color:var(--text2);margin-bottom:22px;">Generate a professional, ATS-optimized resume from your DomaneX profile</p>
+          <button class="btn-primary" onclick="generateResume()" style="padding:13px 32px;">✦ Generate Resume</button>
+        </div>`)}
+    </div>
+  </div>`;
+}
+
+async function generateResume(){
+  const el=document.getElementById('resume-panel');
+  el.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:30px;color:var(--text2);">${spinner()} AI crafting your professional resume...</div>`;
+  const dom=domainOf().name;
+  const result=await callClaude([{role:'user',content:`Generate a professional resume for: Name: ${user.name}, College: ${user.college}, Year: ${user.year}, Domain: ${dom}. Include summary (2 sentences), 6 skills, 2 projects with descriptions and tech stack, 2 achievements. JSON: {"summary":"...","skills":["..."],"projects":[{"name":"...","desc":"...","tech":["..."]}],"achievements":["..."],"atsScore":82}`}],'You are a professional resume writer. Return ONLY valid JSON.',1500);
+  let data=null;
+  try{data=JSON.parse((result||'').replace(/```json|```/g,'').trim());}
+  catch{data={summary:`Motivated ${dom} enthusiast with hands-on project experience. Passionate about building impactful solutions and eager to contribute to innovative tech teams.`,skills:['JavaScript','React.js','Node.js','Python','SQL','Git & GitHub'],projects:[{name:`${dom} Portfolio App`,desc:'Full-stack application showcasing core domain concepts with modern tech stack',tech:['React','Node.js','MongoDB']},{name:'AI Task Manager',desc:'Productivity app with AI recommendations and real-time collaboration',tech:['Python','FastAPI','PostgreSQL']}],achievements:[`Top performer in DomaneX learning track`,`Completed full learning roadmap for ${dom}`],atsScore:84};}
+  const atsScore=data.atsScore||84;
+  el.innerHTML=`
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:22px;" class="two-col">
+    <div style="background:#fff;border-radius:14px;padding:36px;color:#1a1a1a;font-family:'Inter',sans-serif;">
+      <div style="border-bottom:3px solid #06b6d4;padding-bottom:18px;margin-bottom:22px;">
+        <h1 style="font-size:26px;font-weight:800;font-family:'Syne',sans-serif;margin:0;">${user.name}</h1>
+        <p style="color:#06b6d4;font-size:14px;margin-top:4px;font-weight:600;">${dom} Developer</p>
+        <p style="font-size:12px;color:#666;margin-top:3px;">${user.college} · ${user.email||'email@example.com'}</p>
+      </div>
+      <div style="margin-bottom:18px;"><h2 style="font-size:12px;font-weight:700;color:#06b6d4;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Summary</h2><p style="font-size:13px;line-height:1.7;color:#444;">${data.summary}</p></div>
+      <div style="margin-bottom:18px;"><h2 style="font-size:12px;font-weight:700;color:#06b6d4;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Skills</h2><div style="display:flex;flex-wrap:wrap;gap:6px;">${(data.skills||[]).map(s=>`<span style="background:#f0f9ff;color:#0369a1;padding:3px 10px;border-radius:20px;font-size:12px;">${s}</span>`).join('')}</div></div>
+      <div style="margin-bottom:18px;"><h2 style="font-size:12px;font-weight:700;color:#06b6d4;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Projects</h2>${(data.projects||[]).map(p=>`<div style="margin-bottom:12px;padding-left:12px;border-left:3px solid #e2e8f0;"><div style="font-size:14px;font-weight:700;">${p.name}</div><p style="font-size:12px;color:#555;margin:4px 0 6px;line-height:1.6;">${p.desc}</p><div style="display:flex;gap:5px;flex-wrap:wrap;">${(p.tech||[]).map(t=>`<span style="background:#f8fafc;border:1px solid #e2e8f0;color:#475569;padding:2px 7px;border-radius:4px;font-size:11px;">${t}</span>`).join('')}</div></div>`).join('')}</div>
+      <div><h2 style="font-size:12px;font-weight:700;color:#06b6d4;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Achievements</h2>${(data.achievements||[]).map(a=>`<div style="font-size:13px;color:#444;padding:3px 0;display:flex;gap:6px;"><span style="color:#06b6d4;">★</span>${a}</div>`).join('')}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      ${glassCard(`
+        <h3 class="font-syne" style="font-weight:700;margin-bottom:14px;text-align:center;">ATS Score</h3>
+        <div style="position:relative;width:110px;height:110px;margin:0 auto 8px;">
+          <svg width="110" height="110" viewBox="0 0 110 110">
+            <circle cx="55" cy="55" r="46" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="9"/>
+            <circle cx="55" cy="55" r="46" fill="none" stroke="#10b981" stroke-width="9" stroke-dasharray="${(atsScore/100)*289} 289" stroke-linecap="round" transform="rotate(-90 55 55)"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+            <span class="font-syne" style="font-size:22px;font-weight:800;color:#10b981;">${atsScore}%</span>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--text2);text-align:center;">ATS Compatibility</p>`)}
+      ${glassCard(`
+        <h3 class="font-syne" style="font-weight:700;margin-bottom:14px;">Actions</h3>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn-primary" onclick="generateResume()" style="width:100%;font-size:13px;">✦ Regenerate</button>
+          <button class="btn-ghost" style="width:100%;font-size:13px;opacity:.5;cursor:not-allowed;">🔒 PDF Export</button>
+        </div>`)}
+    </div>
+  </div>`;
+}
+
+// ===============================================================
+// PORTFOLIO
+// ===============================================================
+function renderPortfolioPage(){
+  return `
+  <div style="padding:28px 20px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;">
+      <h1 class="font-syne" style="font-size:26px;font-weight:800;">Portfolio <span class="neon-text">Generator</span></h1>${aiBadge()}
+    </div>
+    ${glassCard(`
+      <label style="font-size:13px;color:var(--text2);display:block;margin-bottom:8px;">Tell us about yourself (optional)</label>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <input class="input-field" id="pf-bio" placeholder="e.g., passionate about AI, love building products..." style="flex:1;min-width:180px;"/>
+        <button class="btn-primary" onclick="generatePortfolio()">✦ Generate</button>
+      </div>`,'margin-bottom:20px;')}
+    <div id="portfolio-panel"><div style="text-align:center;padding:50px;color:var(--text2);">Click Generate to create your portfolio</div></div>
+  </div>`;
+}
+
+async function generatePortfolio(){
+  const bio=document.getElementById('pf-bio')?.value||'';
+  const el=document.getElementById('portfolio-panel');
+  el.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:24px;color:var(--text2);">${spinner()} Building your portfolio...</div>`;
+  const dom=domainOf().name;
+  const result=await callClaude([{role:'user',content:`Generate a portfolio for: ${user.name}, ${dom} developer, ${user.college}. Bio hint: "${bio}". JSON: {"bio":"...","projects":[{"name":"...","desc":"...","tech":["..."]}],"skills":["..."],"achievements":["..."]}`}],'Return ONLY valid JSON.',1200);
+  let data=null;
+  try{data=JSON.parse((result||'').replace(/```json|```/g,'').trim());}
+  catch{data={bio:`Passionate ${dom} developer building impactful solutions. Currently at ${user.college} and actively learning.`,projects:[{name:'AI Chat App',desc:'Full-featured chat app with NLP integration',tech:['React','Python','OpenAI']},{name:'Data Dashboard',desc:'Real-time analytics dashboard',tech:['D3.js','Node.js','PostgreSQL']},{name:'Mobile App',desc:'Cross-platform productivity app',tech:['React Native','Firebase']}],skills:['JavaScript','Python','React','Node.js','Machine Learning'],achievements:['Top DomaneX learner','Open source contributor']};}
+  const initials=(user.name||'ST').slice(0,2).toUpperCase();
+  el.innerHTML=`
+  <div style="background:linear-gradient(135deg,#050508,#0a0a18);border:1px solid rgba(6,182,212,0.2);border-radius:18px;overflow:hidden;">
+    <div style="background:linear-gradient(135deg,rgba(6,182,212,0.12),rgba(139,92,246,0.12));padding:40px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <div style="width:72px;height:72px;border-radius:50%;background:rgba(6,182,212,0.2);border:2px solid rgba(6,182,212,0.5);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#06b6d4;margin:0 auto 14px;font-family:'Syne',sans-serif;">${initials}</div>
+      <h2 class="font-syne" style="font-size:28px;font-weight:800;">${user.name}</h2>
+      <p style="color:#06b6d4;font-weight:600;margin-top:4px;">${dom} Developer</p>
+      <p style="color:var(--text2);margin:12px auto 0;max-width:560px;font-size:14px;line-height:1.7;">${data.bio}</p>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;">${(data.skills||[]).map(s=>badge(s,'#06b6d4')).join('')}</div>
+    </div>
+    <div style="padding:36px;">
+      <h3 class="font-syne" style="font-size:20px;font-weight:700;margin-bottom:20px;">Projects</h3>
+      <div class="three-col" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:32px;">
+        ${(data.projects||[]).map(p=>`
+        <div class="glass glass-hover" style="padding:20px;">
+          <h4 class="font-syne" style="font-size:15px;font-weight:700;margin-bottom:8px;">${p.name}</h4>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6;">${p.desc}</p>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">${(p.tech||[]).map(t=>badge(t,'#8b5cf6')).join('')}</div>
+        </div>`).join('')}
+      </div>
+      <h3 class="font-syne" style="font-size:20px;font-weight:700;margin-bottom:14px;">Achievements</h3>
+      ${(data.achievements||[]).map(a=>`<div style="padding:10px 14px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;margin-bottom:8px;display:flex;gap:8px;font-size:14px;"><span>⭐</span>${a}</div>`).join('')}
+      <div style="margin-top:22px;padding:14px 18px;background:rgba(6,182,212,0.08);border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <span style="font-size:14px;color:var(--text2);">Your shareable portfolio link</span>
+        <div style="background:rgba(255,255,255,0.08);padding:5px 12px;border-radius:8px;font-family:'JetBrains Mono';font-size:12px;color:#06b6d4;">domanex.io/${(user.name||'student').toLowerCase().replace(/\s+/g,'')}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ===============================================================
+// LEADERBOARD
+// ===============================================================
+const LB_DATA=[
+  {rank:1,name:'Aryan Sharma',domain:'AI/ML',score:9840,streak:45,badges:28,av:'AS'},
+  {rank:2,name:'Priya Nair',domain:'Web Dev',score:9210,streak:38,badges:24,av:'PN'},
+  {rank:3,name:'Rohan Gupta',domain:'Data Science',score:8950,streak:31,badges:22,av:'RG'},
+  {rank:4,name:'Sneha Patel',domain:'Cybersecurity',score:8720,streak:29,badges:20,av:'SP'},
+  {rank:5,name:'Vikram Singh',domain:'Cloud',score:8340,streak:25,badges:18,av:'VS'},
+  {rank:6,name:'Kavya Reddy',domain:'UI/UX',score:7980,streak:22,badges:16,av:'KR'},
+  {rank:7,name:'Aditya Kumar',domain:'DevOps',score:7650,streak:19,badges:14,av:'AK'},
+  {rank:8,name:'Meera Joshi',domain:'App Dev',score:7200,streak:17,badges:12,av:'MJ'},
+];
+function renderLeaderboard(){
+  const userRow={rank:12,name:user?.name||'You',domain:domainOf().name,score:user?.xp||0,streak:user?.streak||0,badges:3,av:(user?.name||'YO').slice(0,2).toUpperCase()};
+  const podColors=['#94a3b8','#f59e0b','#cd7f32'];
+  const podOrder=[LB_DATA[1],LB_DATA[0],LB_DATA[2]];
+  const podH=[140,180,120];
+  const podR=[2,1,3];
+  return `
+  <div style="padding:28px 20px;">
+    <h1 class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:22px;">🏆 <span class="neon-text">Leaderboard</span></h1>
+    <div class="podium" style="display:flex;justify-content:center;align-items:flex-end;gap:14px;margin-bottom:36px;">
+      ${podOrder.map((p,i)=>`
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:${podColors[i]}30;border:2px solid ${podColors[i]}50;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${podColors[i]};font-family:'Syne',sans-serif;">${p.av}</div>
+        <div style="font-size:11px;font-weight:600;text-align:center;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name.split(' ')[0]}</div>
+        <div class="podium-item" style="background:${podColors[i]}20;border:2px solid ${podColors[i]};border-radius:8px 8px 0 0;width:80px;height:${podH[i]}px;display:flex;align-items:center;justify-content:center;">
+          <span class="font-syne" style="font-size:22px;font-weight:800;color:${podColors[i]};">#${podR[i]}</span>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div class="glass" style="overflow:hidden;">
+      <div style="padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.05);display:grid;grid-template-columns:40px 1fr 100px 80px 70px;gap:10px;align-items:center;">
+        ${['#','Student','Domain','Score','Streak'].map(h=>`<span style="font-size:11px;color:var(--text2);font-weight:600;font-family:'JetBrains Mono';text-transform:uppercase;">${h}</span>`).join('')}
+      </div>
+      ${LB_DATA.map(u=>`
+      <div style="padding:13px 18px;border-bottom:1px solid rgba(255,255,255,0.04);display:grid;grid-template-columns:40px 1fr 100px 80px 70px;gap:10px;align-items:center;">
+        <span class="font-mono" style="font-weight:700;color:${u.rank<=3?podColors[u.rank-1]:'var(--text2)'};font-size:13px;">#${u.rank}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:30px;height:30px;border-radius:50%;background:rgba(6,182,212,0.2);border:1px solid rgba(6,182,212,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#06b6d4;flex-shrink:0;">${u.av}</div>
+          <span style="font-size:13px;font-weight:500;">${u.name}</span>
+        </div>
+        ${badge(u.domain,'#06b6d4')}
+        <span class="font-mono" style="font-size:12px;color:#06b6d4;">${u.score.toLocaleString()}</span>
+        <span style="font-size:12px;">🔥${u.streak}</span>
+      </div>`).join('')}
+    </div>
+    <div class="glass" style="margin-top:16px;padding:14px 18px;background:rgba(6,182,212,0.06);border-color:rgba(6,182,212,0.3);">
+      <div style="display:grid;grid-template-columns:40px 1fr 100px 80px 70px;gap:10px;align-items:center;">
+        <span class="font-mono" style="font-weight:700;color:#06b6d4;">#${userRow.rank}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:30px;height:30px;border-radius:50%;background:rgba(6,182,212,0.2);border:1px solid rgba(6,182,212,0.5);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#06b6d4;flex-shrink:0;">${userRow.av}</div>
+          <span style="font-size:13px;font-weight:600;color:#06b6d4;">${userRow.name} (You)</span>
+        </div>
+        ${badge(userRow.domain,'#06b6d4')}
+        <span class="font-mono" style="font-size:12px;color:#06b6d4;">${userRow.score}</span>
+        <span style="font-size:12px;">🔥${userRow.streak}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ===============================================================
+// EVENTS
+// ===============================================================
+const EVENTS_DATA=[
+  {id:1,title:'Google ML Bootcamp',domain:'AI/ML',type:'Workshop',participants:2400},
+  {id:2,title:'React Summit 2025',domain:'Web Dev',type:'Conference',participants:5000},
+  {id:3,title:'AWS Cloud Day',domain:'Cloud',type:'Hackathon',participants:1800},
+  {id:4,title:'Figma Design Sprint',domain:'UI/UX',type:'Workshop',participants:900},
+  {id:5,title:'CTF Competition',domain:'Cybersecurity',type:'Competition',participants:3200},
+];
+function renderEvents(){
+  return `
+  <div style="padding:28px 20px;">
+    <h1 class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:22px;">Tech <span class="neon-text">Events</span></h1>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;">
+      ${EVENTS_DATA.map(ev=>{
+        const dom=DOMAINS.find(d=>d.name===ev.domain)||DOMAINS[0];
+        const isSaved=savedEvents.includes(ev.id);
+        return `<div class="glass glass-hover" style="padding:22px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">${badge(ev.domain,dom.color)}${badge(ev.type,'#8b5cf6')}</div>
+            <button onclick="toggleEvent(${ev.id})" style="background:none;border:none;cursor:pointer;font-size:20px;">${isSaved?'🔖':'📌'}</button>
+          </div>
+          <h3 class="font-syne" style="font-size:17px;font-weight:700;margin-bottom:10px;">${ev.title}</h3>
+          <div style="display:flex;gap:14px;color:var(--text2);font-size:13px;margin-bottom:16px;">
+            <span>📅 Upcoming</span><span>👥 ${ev.participants.toLocaleString()}</span>
+          </div>
+          <button class="btn-primary" style="width:100%;padding:10px;font-size:13px;">Register Now</button>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+function toggleEvent(id){
+  const idx=savedEvents.indexOf(id);
+  if(idx>-1)savedEvents.splice(idx,1);else savedEvents.push(id);
+  renderAppPage('events');
+}
+
+// ===============================================================
+// COMMUNITY
+// ===============================================================
+function renderCommunity(){
+  return `
+  <div style="padding:28px 20px;max-width:800px;">
+    <h1 class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:22px;">Peer <span class="neon-text">Community</span></h1>
+    ${glassCard(`
+      <textarea class="input-field" id="new-post" rows="3" placeholder="Share your progress, a win, or ask for help..." style="resize:none;margin-bottom:12px;"></textarea>
+      <div style="display:flex;justify-content:flex-end;">
+        <button class="btn-primary" onclick="addPost()" style="padding:10px 22px;">Post →</button>
+      </div>`,'margin-bottom:20px;')}
+    <div id="posts-list"></div>
+  </div>`;
+}
+
+function renderPostsList(){
+  const el=document.getElementById('posts-list');
+  if(!el)return;
+  el.innerHTML=communityPosts.map(post=>{
+    const dom=DOMAINS.find(d=>d.name===post.domain)||DOMAINS[0];
+    return `<div class="glass" style="padding:20px;margin-bottom:14px;">
+      <div style="display:flex;gap:12px;">
+        <div style="width:42px;height:42px;border-radius:50%;background:${dom.color}30;border:1px solid ${dom.color}40;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${dom.color};flex-shrink:0;">${post.avatar}</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+            <span class="font-syne" style="font-weight:700;font-size:14px;">${post.author}</span>
+            ${badge(post.domain,dom.color)}
+          </div>
+          <p style="font-size:14px;line-height:1.7;margin-bottom:12px;">${post.content}</p>
+          <div style="display:flex;gap:14px;">
+            <button onclick="likePost(${post.id})" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:13px;">❤️ ${post.likes}</button>
+            <span style="color:var(--text2);font-size:13px;">💬 ${post.comments}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addPost(){
+  const txt=document.getElementById('new-post')?.value?.trim();
+  if(!txt)return;
+  communityPosts.unshift({id:Date.now(),author:user.name,domain:domainOf().name,content:txt,likes:0,comments:0,avatar:(user.name||'YO').slice(0,2).toUpperCase()});
+  document.getElementById('new-post').value='';
+  renderPostsList();
+}
+
+function likePost(id){
+  communityPosts=communityPosts.map(p=>p.id===id?{...p,likes:p.likes+1}:p);
+  renderPostsList();
+}
+
+// ===============================================================
+// AI GUIDE
+// ===============================================================
+function initAIGuide(){
+  chatMessages=[{role:'assistant',content:`Hi ${user.name}! I'm X-Guide, your AI mentor 🤖\n\nI know you're learning **${domainOf().name}** and currently at **78% progress**. What would you like help with today?`}];
+  renderChatMessages();
+  renderPostsList();
+}
+
+function renderAIGuide(){
+  return `
+  <div style="padding:28px 20px;height:calc(100vh - 100px);display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#06b6d4,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:22px;">🤖</div>
+      <div>
+        <h1 class="font-syne" style="font-size:20px;font-weight:800;">X-Guide <span class="neon-text">AI</span></h1>
+        <p style="font-size:12px;color:var(--text2);">Personalized AI mentor • ${user?.plan==='free'?'3 messages/day':'Unlimited'}</p>
+      </div>
+    </div>
+    <div id="chat-msgs" style="flex:1;overflow-y:auto;margin-bottom:14px;padding-right:4px;"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+      ${[`What next in ${domainOf().name}?`,'Interview prep tips','Review my progress','Suggest weekend project'].map(s=>`<button class="btn-ghost" onclick="setChat('${s.replace(/'/g,"\\'")}')" style="padding:5px 12px;font-size:12px;">${s}</button>`).join('')}
+    </div>
+    <div style="display:flex;gap:10px;">
+      <input class="input-field" id="chat-input" placeholder="Ask X-Guide anything about your career..." onkeydown="if(event.key==='Enter')sendChat()" style="flex:1;"/>
+      <button class="btn-primary" onclick="sendChat()" style="padding:12px 18px;">Send</button>
+    </div>
+  </div>`;
+}
+
+function setChat(txt){const el=document.getElementById('chat-input');if(el)el.value=txt;}
+
+async function sendChat(){
+  const el=document.getElementById('chat-input');
+  if(!el||!el.value.trim())return;
+  const msg=el.value.trim();el.value='';
+  chatMessages.push({role:'user',content:msg});
+  renderChatMessages(true);
+  const dom=domainOf().name;
+  const reply=await callClaude(chatMessages,`You are X-Guide, AI mentor for DomaneX. User: ${user.name}, studying ${dom}, ${user.year} at ${user.college}. Progress: 78%. Be helpful, encouraging, specific. Max 180 words.`,500)||'I had a momentary issue. Please try asking about your roadmap, skills, or career guidance!';
+  chatMessages.push({role:'assistant',content:reply});
+  renderChatMessages();
+}
+
+function renderChatMessages(loading=false){
+  const el=document.getElementById('chat-msgs');
+  if(!el)return;
+  el.innerHTML=chatMessages.map(m=>`
+  <div style="display:flex;justify-content:${m.role==='user'?'flex-end':'flex-start'};margin-bottom:12px;">
+    ${m.role==='assistant'?`<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#06b6d4,#8b5cf6);display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0;font-size:14px;">🤖</div>`:''}
+    <div class="${m.role==='user'?'chat-bubble-user':'chat-bubble-ai'}" style="white-space:pre-wrap;">${m.content}</div>
+  </div>`).join('');
+  if(loading)el.innerHTML+=`<div style="display:flex;margin-bottom:12px;"><div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#06b6d4,#8b5cf6);display:flex;align-items:center;justify-content:center;margin-right:8px;font-size:14px;">🤖</div><div class="chat-bubble-ai"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  el.scrollTop=el.scrollHeight;
+}
+
+// ===============================================================
+// PRICING
+// ===============================================================
+function renderPricing(){
+  const plans=[
+    {id:'free',name:'Free',price:'₹0',per:'/month',color:'#94a3b8',feats:['8 Domain Discovery','3 AI Messages/day','Basic Roadmap','Quiz & Tasks','Community Access','2 Domain Switches/month']},
+    {id:'pro',name:'Pro',price:'₹499',per:'/month',color:'#06b6d4',popular:true,feats:['Everything in Free','Unlimited AI Messages','Advanced Roadmaps','Skill Gap Analyzer','Unlimited Switches','Portfolio Generator','Priority Support']},
+    {id:'premium',name:'Premium',price:'₹999',per:'/month',color:'#8b5cf6',feats:['Everything in Pro','1:1 AI Mock Interviews','PDF Resume Export','Career Coach Access','Custom Portfolio URL','Advanced Analytics']},
+  ];
+  return `
+  <div style="padding:28px 20px;">
+    <div style="text-align:center;margin-bottom:40px;">
+      <h1 class="font-syne" style="font-size:30px;font-weight:800;margin-bottom:8px;">Choose Your <span class="neon-text">Plan</span></h1>
+      <p style="color:var(--text2);">Unlock your full potential with DomaneX</p>
+    </div>
+    <div class="three-col" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;max-width:880px;margin:0 auto;">
+      ${plans.map(plan=>`
+      <div style="position:relative;">
+        ${plan.popular?`<div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#06b6d4,#8b5cf6);color:#fff;padding:3px 14px;border-radius:20px;font-size:11px;font-weight:700;z-index:1;white-space:nowrap;">Most Popular</div>`:''}
+        <div class="glass" style="padding:28px;border-color:${plan.popular?'rgba(6,182,212,0.4)':'rgba(255,255,255,0.08)'};background:${plan.popular?'rgba(6,182,212,0.06)':'rgba(255,255,255,0.04)'};">
+          <h2 class="font-syne" style="font-size:19px;font-weight:800;margin-bottom:4px;color:${plan.color};">${plan.name}</h2>
+          <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:22px;">
+            <span class="font-syne" style="font-size:34px;font-weight:800;">${plan.price}</span>
+            <span style="color:var(--text2);font-size:13px;">${plan.per}</span>
+          </div>
+          <div style="margin-bottom:24px;">${plan.feats.map(f=>`<div style="display:flex;gap:7px;margin-bottom:9px;font-size:13px;align-items:flex-start;"><span style="color:${plan.color};margin-top:1px;">✓</span>${f}</div>`).join('')}</div>
+          <button onclick="upgradePlan('${plan.id}')" class="${user.plan===plan.id?'btn-ghost':'btn-primary'}" style="width:100%;padding:13px;font-size:14px;" ${user.plan===plan.id?'disabled':''}>
+            ${user.plan===plan.id?'Current Plan':plan.id==='free'?'Free Forever':`Upgrade to ${plan.name}`}
+          </button>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function upgradePlan(id){
+  if(id==='free')return;
+  user.plan=id;
+  openModal(`
+    <div style="text-align:center;">
+      <div style="font-size:60px;margin-bottom:14px;">🚀</div>
+      <h2 class="font-syne" style="font-size:22px;font-weight:800;margin-bottom:10px;">Plan Upgraded!</h2>
+      <p style="color:var(--text2);margin-bottom:22px;">You're now on <strong style="color:#06b6d4;">${id}</strong>. All features are unlocked!</p>
+      <button class="btn-primary" onclick="closeModal();showPage('dashboard')" style="width:100%;padding:13px;">Go to Dashboard</button>
+    </div>`);
+  updateTopbar();
+}
+
+// ===============================================================
+// PROFILE
+// ===============================================================
+function renderProfile(){
+  const dom=domainOf();
+  return `
+  <div style="padding:28px 20px;max-width:920px;">
+    <h1 class="font-syne" style="font-size:26px;font-weight:800;margin-bottom:22px;">My <span class="neon-text">Profile</span></h1>
+    <div class="two-col" style="display:grid;grid-template-columns:280px 1fr;gap:22px;">
+      <div style="display:flex;flex-direction:column;gap:18px;">
+        ${glassCard(`
+          <div style="text-align:center;">
+            <div style="width:68px;height:68px;border-radius:50%;background:rgba(6,182,212,0.2);border:2px solid rgba(6,182,212,0.5);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#06b6d4;margin:0 auto 12px;font-family:'Syne',sans-serif;">${(user.name||'ST').slice(0,2).toUpperCase()}</div>
+            <h2 class="font-syne" style="font-size:20px;font-weight:700;">${user.name}</h2>
+            <p style="color:var(--text2);font-size:13px;margin-top:4px;">${user.college}</p>
+            <p style="color:var(--text2);font-size:12px;">${user.year}</p>
+            <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
+              ${badge(`${dom.icon} ${dom.name}`,dom.color)}
+              ${badge(`Lv.${user.level||1}`,'#8b5cf6')}
+              ${badge(user.plan==='free'?'Free':user.plan==='pro'?'Pro':'Premium',user.plan==='free'?'#94a3b8':user.plan==='pro'?'#06b6d4':'#8b5cf6')}
+            </div>
+            <button class="btn-ghost" onclick="editProfile()" style="width:100%;margin-top:14px;font-size:13px;">✏️ Edit Profile</button>
+          </div>`)}
+        ${glassCard(`
+          <h3 class="font-syne" style="font-weight:700;margin-bottom:14px;">Stats</h3>
+          ${[['XP Points',user.xp||0,'#8b5cf6'],['Day Streak',`${user.streak||0} days 🔥`,'#f59e0b'],['Tasks Done',user.tasksCompleted||0,'#10b981'],['Quiz Score',`${user.quizScore||0}/5`,'#06b6d4']].map(([l,v,c])=>`
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+            <span style="font-size:13px;color:var(--text2);">${l}</span>
+            <span style="font-size:14px;font-weight:700;color:${c};">${v}</span>
+          </div>`).join('')}`)}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px;">
+        ${glassCard(`
+          <h3 class="font-syne" style="font-weight:700;margin-bottom:14px;">Domain History</h3>
+          ${[dom,...DOMAINS.slice(0,2)].map((d,i)=>`
+          <div style="display:flex;gap:12px;margin-bottom:18px;">
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div style="width:12px;height:12px;border-radius:50%;background:${d.color};margin-top:3px;"></div>
+              ${i<2?`<div style="width:2px;flex:1;background:rgba(255,255,255,0.06);margin-top:4px;min-height:24px;"></div>`:''}
+            </div>
+            <div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <span class="font-syne" style="font-size:14px;font-weight:700;">${d.name}</span>
+                ${i===0?badge('Active',d.color):''}
+              </div>
+              <p style="font-size:12px;color:var(--text2);margin-top:2px;">${i===0?'Currently learning':'Previously explored'}</p>
+            </div>
+          </div>`).join('')}`)}
+        ${glassCard(`
+          <h3 class="font-syne" style="font-weight:700;margin-bottom:14px;">Badges Earned</h3>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            ${['🚀 First Login','📝 Quiz Master','🔥 Streak','💡 Fast Learner','📊 Explorer'].map(b=>`<div class="glass" style="padding:7px 12px;font-size:13px;">${b}</div>`).join('')}
+          </div>`)}
+        ${glassCard(`
+          <h3 class="font-syne" style="font-weight:700;margin-bottom:14px;">Overall Progress</h3>
+          ${progressBar(78)}
+          <p style="font-size:13px;color:var(--text2);margin-top:8px;">78% complete — Keep it up!</p>`)}
+      </div>
+    </div>
+  </div>`;
+}
+
+function editProfile(){
+  openModal(`
+    <h2 class="font-syne" style="font-size:20px;font-weight:700;margin-bottom:18px;">Edit Profile</h2>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:5px;">Name</label><input class="input-field" id="ep-name" value="${user.name||''}"/></div>
+      <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:5px;">College</label><input class="input-field" id="ep-college" value="${user.college||''}"/></div>
+      <div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:5px;">Year</label>
+        <select class="input-field" id="ep-year">${['1st Year','2nd Year','3rd Year','4th Year','Graduate'].map(y=>`<option${user.year===y?' selected':''}>${y}</option>`).join('')}</select>
+      </div>
+      <button class="btn-primary" onclick="saveProfile()" style="width:100%;padding:12px;">Save Changes</button>
+    </div>`);
+}
+
+function saveProfile(){
+  user.name=document.getElementById('ep-name').value||user.name;
+  user.college=document.getElementById('ep-college').value||user.college;
+  user.year=document.getElementById('ep-year').value||user.year;
+  closeModal();
+  updateTopbar();
+  renderAppPage('profile');
+}
+
+// ===============================================================
+// INIT
+// ===============================================================
+window.onload=function(){
+  // Mobile topbar toggle always visible
+  const mt=document.getElementById('mobile-toggle');
+  if(mt)mt.style.display='flex';
+  showPage('landing');
+  // Close sidebar on mobile when clicking outside
+  document.addEventListener('click',function(e){
+    const sb=document.getElementById('sidebar');
+    if(sb&&sb.classList.contains('mobile-open')&&!sb.contains(e.target)&&e.target.id!=='mobile-toggle'){
+      sb.classList.remove('mobile-open');
+    }
+  });
+};
+</script>
+</body>
+</html>
